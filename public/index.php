@@ -6,25 +6,8 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <input type="file" name="" id="">
+    <button>click</button>
 </body>
-<script>
-    let formData = new FormData();
-    formData.append("payload", JSON.stringify({
-        fileSize: 1000 * 1000 * 150,
-        recordDuration: 60,
-        fileName : "test"
-    }));
-    fetch("/ask_permission_upload_record.php", {
-        method: "POST",
-        body:formData
-    })
-    .then((res) => {
-        console.log(res.status);
-        return res.json();
-    })
-    .then((json) => {
-        console.log(json);
-    })
-</script>
+<script src="./script.js"></script>
 </html>

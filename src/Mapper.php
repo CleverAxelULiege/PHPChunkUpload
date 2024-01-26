@@ -5,15 +5,27 @@ namespace Upload;
 use stdClass;
 use Exception;
 use Upload\DTOs\RequestUploadDTO;
+use Upload\DTOs\UploadStateDTO;
 
 class Mapper{
+
+    public static function toUploadState(stdClass $payload){
+        return new UploadStateDTO(
+            $payload->lastChunkFileReceivedAt,
+            $payload->currentChunkFile,
+            $payload->currentFileSize,
+            $payload->extension,
+            $payload->CSRFToken
+        );
+    }
+
     public static function toRequestUpload(stdClass $payload){
         $requestUpload = new RequestUploadDTO();
         $requestUpload->fileName = $payload->fileName ?? null;
         $requestUpload->fileSize = $payload->fileSize ?? null;
         $requestUpload->recordDuration = $payload->recordDuration ?? null;
         $requestUpload->CSRFtoken = $payload->CSRFtoken ?? null;
-        $requestUpload->tokenSessionUpload = $_COOKIE["token_session_upload"] ?? null;
+        $requestUpload->sessionTokenUpload = $_COOKIE[FileManager::COOKIE_NAME] ?? "UNKNOWN";
 
         return $requestUpload;
     }

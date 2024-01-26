@@ -12,5 +12,5 @@ class RequestUploadDTO{
     public int|null $recordDuration = null;
 
     public string|null $CSRFtoken = null;
-    public string|null $tokenSessionUpload = null;
+    public string|null $sessionTokenUpload = null;
 }
