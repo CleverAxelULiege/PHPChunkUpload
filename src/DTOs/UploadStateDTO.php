@@ -9,7 +9,8 @@ class UploadStateDTO
         public int $currentChunkFile,
         public int $currentFileSize,
         public string $extension,
-        public string $CSRFToken
+        public string $CSRFToken,
+        public string|null $hashedFile = null
     ) {
     }
 }

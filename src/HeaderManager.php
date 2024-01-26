@@ -11,6 +11,14 @@ class HeaderManager{
         http_response_code(401);
     }
 
+    public static function setServiceUnavailableStatus(){
+        http_response_code(503);
+    }
+
+    public static function setCreatedStatus(){
+        http_response_code(201);
+    }
+
     public static function setContentTypeToJson(){
         header('Content-Type: application/json');
     }

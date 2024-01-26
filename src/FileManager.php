@@ -10,9 +10,10 @@ use Upload\DTOs\UploadStateDTO;
 class FileManager
 {
     private UploadStateDTO|null $uploadState;
-    public function __construct(private array $traduction, RequestUploadDTO $requestUpload)
+    public function __construct(private array $traduction, private RequestUploadDTO $requestUpload)
     {
         $this->uploadState = $this->getUploadState($requestUpload);
+        $this->buildUploadTempDirectoryIfDoesntExist();
     }
 
     const PATH_TO_UPLOAD_TEMP = __DIR__ . "/../upload/temp";
@@ -22,7 +23,7 @@ class FileManager
     /**
      * Mettre à NULL pour ne pas en tenir compte
      */
-    const MAX_FILE_SIZE_BYTES = 1000 * 1000 * 150;
+    const MAX_FILE_SIZE_BYTES = 1000 * 1000 * 250;
 
     /**
      * Mettre à NULL pour ne pas en tenir compte
@@ -35,6 +36,12 @@ class FileManager
     const MIN_RECORDING_TIME_SECOND = 0;
 
     const ALLOWED_EXTENSIONS = ["mp4", "webm"];
+
+    private function buildUploadTempDirectoryIfDoesntExist(){
+        if(!is_dir(FileManager::PATH_TO_UPLOAD_TEMP)){
+            mkdir(FileManager::PATH_TO_UPLOAD_TEMP, 0777, true);
+        }
+    }
 
     public function fileRespectRule(RequestUploadDTO $requestUpload)
     {
@@ -196,11 +203,41 @@ class FileManager
         ]);
     }
 
-    public function validateCSRFToken(RequestUploadDTO $requestupload){
+    public function validateCSRFToken(){
         if($this->uploadState === null){
             return false;
         }
 
-        return $this->uploadState->CSRFToken === $requestupload->CSRFtoken;
+        return $this->uploadState->CSRFToken === $this->requestUpload->CSRFtoken;
+    }
+
+    public function moveUploadedFileToTempAndUpdateUploadState(){
+        $newFileName = $this->uploadState->currentChunkFile . ".bin";
+        $successToMoveFile = move_uploaded_file($_FILES["file"]["tmp_name"], FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload . "/" . $newFileName);
+        
+        if($successToMoveFile === false){
+            return false;
+        }
+
+        if($this->uploadState->currentChunkFile == 0){
+            $this->uploadState->hashedFile = hash_file("sha256", FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload . "/" . $newFileName);
+        }
+
+        $this->uploadState->currentChunkFile++;
+        $this->uploadState->currentFileSize += $_FILES["file"]["size"];
+        file_put_contents(
+            FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload . "/" . "upload_state.json",
+            json_encode($this->uploadState, JSON_UNESCAPED_UNICODE)
+        );
+    }
+
+    public function refreshCSRFToken(){
+        $this->uploadState->CSRFToken = $this->createRandomToken();
+        file_put_contents(
+            FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload . "/" . "upload_state.json",
+            json_encode($this->uploadState, JSON_UNESCAPED_UNICODE)
+        );
+
+        return $this->uploadState->CSRFToken;
     }
 }

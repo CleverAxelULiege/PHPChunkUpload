@@ -18,11 +18,23 @@ if(!$fileManager->validateCSRFToken($requestUpload)){
     HeaderManager::setUnauthorizedStatus();
 
     echo json_encode([
-        "msg" => "Failed to validate the CSRF token."
+        "msg" => "Failed to validate the CSRF token.",
     ]);
     exit;
 }
 
+$successToMoveFile = $fileManager->moveUploadedFileToTempAndUpdateUploadState();
+if($successToMoveFile === false){
+    HeaderManager::setServiceUnavailableStatus();
+    echo json_encode([
+        "msg" => "Send again",
+        "CSRFToken" => $fileManager->refreshCSRFToken()
+    ]);
+    exit;
+}
+
+HeaderManager::setCreatedStatus();
 echo json_encode([
-    "msg" => " it"
+    "msg" => "success",
+    "CSRFToken" => $fileManager->refreshCSRFToken()
 ]);

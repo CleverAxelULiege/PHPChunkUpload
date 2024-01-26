@@ -4,8 +4,8 @@ namespace Upload;
 
 use stdClass;
 use Exception;
-use Upload\DTOs\RequestUploadDTO;
 use Upload\DTOs\UploadStateDTO;
+use Upload\DTOs\RequestUploadDTO;
 
 class Mapper{
 

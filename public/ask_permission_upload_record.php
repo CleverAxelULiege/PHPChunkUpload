@@ -14,12 +14,11 @@ $payload = $_POST["payload"] ?? null;
 $requestUpload = Mapper::toRequestUpload(Mapper::jsonDecode($payload));
 $fileManager = new FileManager(Traduction::retrieve(), $requestUpload);
 
-
-if(!$fileManager->fileRespectRule($requestUpload)){
+if (!$fileManager->fileRespectRule($requestUpload)) {
     exit;
 }
 
-if($fileManager->doesTempFolderExistAndActive($requestUpload)){
+if ($fileManager->doesTempFolderExistAndActive($requestUpload)) {
     echo json_encode([
         "msg" => "to do"
     ]);
@@ -31,6 +30,5 @@ $uploadState = $fileManager->createTempFolderAndGetState($requestUpload);
 
 echo json_encode([
     "msg" => "success",
-    "CSRFToken" => $uploadState->CSRFToken,
-    "currentChunkFile" => $uploadState->currentChunkFile
+    "CSRFToken" => $uploadState->CSRFToken
 ]);
