@@ -9,5 +9,5 @@
     <input type="file" name="" id="">
     <button>click</button>
 </body>
-<script src="./script.js"></script>
+<script src="./script_bis.js" type="module"></script>
 </html>
