@@ -27,14 +27,41 @@ if (!$fileManager->validateCSRFToken($requestUpload)) {
 }
 
 $successToMoveFile = $fileManager->moveUploadedFileToTemp();
+
 if ($successToMoveFile === false) {
-    HeaderManager::setServiceUnavailableStatus();
+
+    switch ($fileManager->statusUploadedFile) {
+
+        case FileManager::STATUS_FAILED_TO_MOVE_FILE:
+            HeaderManager::setServiceUnavailableStatus();
+            echo json_encode([
+                "msg" => "Resend file",
+                "CSRFToken" => $fileManager->refreshCSRFToken()
+            ]);
+            break;
+
+        case FileManager::STATUS_DIRECTORY_DOESNT_EXIST:
+            HeaderManager::setBadRequestStatus();
+            echo json_encode([
+                "msg" => "Failed to upload. Your session is missing.",
+            ]);
+            break;
+    }
+
+    exit;
+}
+
+if ($fileManager->getUploadState()->currentFileSize > FileManager::MAX_FILE_SIZE_BYTES) {
+    $fileManager->removeUploadTempDir($requestUpload->sessionTokenUpload);
+    HeaderManager::setBadRequestStatus();
     echo json_encode([
-        "msg" => "Resend file",
-        "CSRFToken" => $fileManager->refreshCSRFToken()
+        "msg" => "Your file has exceeded the max size allowed. Somehow you passed through the first validation while doing some shenanigans with the JS. Congrats.",
     ]);
     exit;
 }
+
+//refresh the session
+$fileManager->setSessionTokenUpload($requestUpload->sessionTokenUpload);
 
 echo json_encode([
     "msg" => "success",

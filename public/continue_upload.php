@@ -16,9 +16,10 @@ $requestUpload = Mapper::toRequestUpload(Mapper::jsonDecode($payload));
 $fileManager = new FileManager(Traduction::retrieve(), $requestUpload);
 
 if (!$fileManager->isTempFolderActive()) {
+    $fileManager->removeUploadTempDir($requestUpload->sessionTokenUpload);
     HeaderManager::setBadRequestStatus();
     echo json_encode([
-        "msg" => "Upload is no longer active. Restart upload from the beginning."
+        "msg" => "Upload is no longer active or doesn't exist. Restart to upload from the beginning."
     ]);
     
     exit;
@@ -26,13 +27,13 @@ if (!$fileManager->isTempFolderActive()) {
 
 if($fileManager->hashedFileCorrespond()){
     echo json_encode([
-        "msg" => "Hash file corresponds.",
+        "msg" => "Hash file corresponds. Continue the upload.",
         "nextChunk" => $fileManager->getNextChunk(),
         "CSRFToken" => $fileManager->refreshCSRFToken(),
     ]);
 } else {
     HeaderManager::setBadRequestStatus();
     echo json_encode([
-        "msg" => "Hash file doesn't correspond. Restart upload from the beginning.",
+        "msg" => "Hash file doesn't correspond. Restart to upload from the beginning.",
     ]);
 }

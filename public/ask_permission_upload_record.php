@@ -24,5 +24,4 @@ $CSRFToken = $fileManager->createTempFolderAndGetCSRFToken();
 echo json_encode([
     "msg" => "success",
     "CSRFToken" => $CSRFToken,
-    "chunkSize" => FileManager::MAX_CHUNK_FILE_SIZE_BYTES,
 ]);

@@ -16,7 +16,7 @@ function preventLargeContentLengthOrFileTooBig()
         }
 
 
-        if ($_FILES[FileManager::FILE_FIELD_NAME]["error"] === UPLOAD_ERR_INI_SIZE || $_FILES[FileManager::FILE_FIELD_NAME]["size"] > FileManager::MAX_CHUNK_FILE_SIZE_BYTES) {
+        if ($_FILES[FileManager::FILE_FIELD_NAME]["error"] === UPLOAD_ERR_INI_SIZE || $_FILES[FileManager::FILE_FIELD_NAME]["size"] > FileManager::MAX_FILE_SIZE_BYTES ) {
             HeaderManager::setUnprocessableEntityStatus();
             echo json_encode([
                 "msg" => "The file or chunk file sent is too big."

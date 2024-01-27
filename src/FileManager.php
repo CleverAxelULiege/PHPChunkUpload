@@ -9,9 +9,14 @@ use Upload\DTOs\UploadStateDTO;
 class FileManager
 {
     private UploadStateDTO|null $uploadState;
+
+    const STATUS_FAILED_TO_MOVE_FILE = 0;
+    const STATUS_DIRECTORY_DOESNT_EXIST = 1;
+    public int $statusUploadedFile = -1;
+
     public function __construct(private array $traduction, private RequestUploadDTO $requestUpload)
     {
-        $this->uploadState = $this->getUploadState($requestUpload);
+        $this->uploadState = $this->getUploadStateFromRequest($requestUpload);
         $this->buildUploadTempDirectoryIfDoesntExist();
     }
 
@@ -23,8 +28,6 @@ class FileManager
      * Mettre à NULL pour ne pas en tenir compte
      */
     const MAX_FILE_SIZE_BYTES = 1000 * 1000 * 250;
-
-    const MAX_CHUNK_FILE_SIZE_BYTES = 1000 * 1000;
 
     /**
      * Mettre à NULL pour ne pas en tenir compte
@@ -108,7 +111,7 @@ class FileManager
     }
 
 
-    private function getUploadState(RequestUploadDTO $requestUpload): null|UploadStateDTO
+    private function getUploadStateFromRequest(RequestUploadDTO $requestUpload): null|UploadStateDTO
     {
         $uploadStateJson = null;
 
@@ -164,7 +167,6 @@ class FileManager
 
     /**
      * Regarde si le dossier temporaire qui est toujours actif peut recevoir des fichiers et existe.
-     * S'il existe mais que le temps imparti est passé on supprime son contenu.
      */
     public function isTempFolderActive(): bool
     {
@@ -174,7 +176,6 @@ class FileManager
 
         $currentTimestamp = strtotime("now");
         if (($currentTimestamp - $this->uploadState->lastChunkFileReceivedAt) > FileManager::TEMP_FOLDER_ACTIVE_SECOND) {
-            $this->removeUploadTempDir($this->requestUpload->sessionTokenUpload);
             return false;
         }
 
@@ -186,7 +187,7 @@ class FileManager
      */
     public function removeUploadTempDir(string $sessionTokenUpload): bool
     {
-        if ($sessionTokenUpload === "") {
+        if(!is_dir(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $sessionTokenUpload)){
             return false;
         }
 
@@ -198,10 +199,10 @@ class FileManager
         return rmdir(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $sessionTokenUpload);
     }
 
-    private function setSessionTokenUpload(string $token)
+    public function setSessionTokenUpload(string $token)
     {
         setcookie(FileManager::COOKIE_NAME, $token, [
-            'expires' => time() + 3600 * 24,
+            'expires' => time() + FileManager::TEMP_FOLDER_ACTIVE_SECOND * 2,
             'path' => '/',
             'secure' => true,
             'httponly' => true,
@@ -212,7 +213,7 @@ class FileManager
     public function removeSessionTokenUpload()
     {
         setcookie(FileManager::COOKIE_NAME, "", [
-            'expires' => time() - 3600 * 24,
+            'expires' => time() - FileManager::TEMP_FOLDER_ACTIVE_SECOND * 2,
             'path' => '/',
             'secure' => true,
             'httponly' => true,
@@ -229,42 +230,23 @@ class FileManager
         return $this->uploadState->CSRFToken === $this->requestUpload->CSRFtoken;
     }
 
-    // public function preventLargeContentLengthOrFileTooBig()
-    // {
-    //     if (
-    //         isset($_SERVER["CONTENT_LENGTH"]) &&
-    //         (int) $_SERVER["CONTENT_LENGTH"] > (1024 * 1024 * (int) ini_get('post_max_size'))
-    //     ) {
-    //         HeaderManager::setUnprocessableEntityStatus();
-    //         echo json_encode([
-    //             "msg" => "The content length is too big."
-    //         ]);
-    //         exit;
-    //     }
-
-
-    //     if ($_FILES[FileManager::FILE_FIELD_NAME]["error"] === UPLOAD_ERR_INI_SIZE || $_FILES[FileManager::FILE_FIELD_NAME]["size"] > FileManager::MAX_CHUNK_FILE_SIZE_BYTES) {
-    //         HeaderManager::setUnprocessableEntityStatus();
-    //         echo json_encode([
-    //             "msg" => "The file or chunk file sent is too big."
-    //         ]);
-    //         exit;
-    //     }
-    // }
-
-
-
     /**
      * Renvoie vrai on a réussi à correctement enregistrer le bout de fichier
      * sinon FAUX et je mets à jour un status pour voir ce qui a raté
      */
     public function moveUploadedFileToTemp(): bool
     {
+        if(!is_dir(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload)){
+            $this->statusUploadedFile = FileManager::STATUS_DIRECTORY_DOESNT_EXIST;
+            return false;
+        }
+
         $newFileName = $this->uploadState->currentChunkFile . ".bin";
         $pathToNewFile = FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload . "/" . $newFileName;
         $successToMoveFile = move_uploaded_file($_FILES[FileManager::FILE_FIELD_NAME]["tmp_name"], $pathToNewFile);
 
         if ($successToMoveFile === false) {
+            $this->statusUploadedFile = FileManager::STATUS_FAILED_TO_MOVE_FILE;
             return false;
         }
 
@@ -284,17 +266,8 @@ class FileManager
         return hash_file("sha256", $_FILES[FileManager::FILE_FIELD_NAME]["tmp_name"]) === $this->uploadState->hashedFile;
     }
 
-    private function isUploadedFileEmpty(): bool
-    {
-        if (empty($_FILES)) {
-            return false;
-        }
-
-        if (!file_exists($_FILES[FileManager::FILE_FIELD_NAME]['tmp_name']) || !is_uploaded_file($_FILES[FileManager::FILE_FIELD_NAME]['tmp_name'])) {
-            return false;
-        }
-
-        return true;
+    public function getUploadState(){
+        return $this->uploadState;
     }
 
     private function updateUploadState(): void
