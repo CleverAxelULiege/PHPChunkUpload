@@ -42,9 +42,34 @@ export class UploadManager {
         }, {once: true, signal: this.abortEventListener.signal});
     }
 
+    async uploadChunk(){
+        if(this.CSRFToken == ""){
+            console.error("No CSRF token given");
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append("payload", JSON.stringify({
+            CSRFtoken: this.CSRFToken,
+        }));
+        formData.append("file", this.file.slice(this.start, this.end))
+
+        let response = await fetch(UPLOAD_RECORD_LINK, {
+            method: "POST",
+            body: formData
+        });
+
+        let json = await response.json();
+        console.log(json);
+        this.CSRFToken = json.CSRFToken;
+
+        this.start = this.end;
+        this.end = this.start + CHUNK_PART;
+    }
+
     async askPermissionToUpload() {
         if (this.recordDuration == null) {
-            window.alert("File duration not yet retrieved");
+            window.alert("File duration not yet retrieved, please wait a few more seconds");
             return;
         }
 
@@ -53,13 +78,17 @@ export class UploadManager {
             fileSize: this.file.size,
             recordDuration: this.recordDuration,
             fileName: this.file.name,
-            CSRFtoken: CSRFToken,
+            CSRFtoken: this.CSRFToken,
         }));
 
         let response = await fetch(ASK_PERMISSION_TO_UPLOAD_LINK, {
             method: "POST",
             body: formData
         });
+
+        let json = await response.json();
+        console.log(json);
+        this.CSRFToken = json.CSRFToken;
 
         
     }

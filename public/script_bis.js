@@ -11,6 +11,9 @@ INPUT_FILE.addEventListener("change", () => {
     uploadManager.setFile(INPUT_FILE.files[0]);
 });
 
-document.querySelector("button").addEventListener("click", () => {
-    
+document.querySelector("#ask").addEventListener("click", () => {
+    uploadManager.askPermissionToUpload();
+})
+document.querySelector("#next").addEventListener("click", () => {
+    uploadManager.uploadChunk();
 })

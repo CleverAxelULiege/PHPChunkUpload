@@ -7,25 +7,26 @@
 </head>
 <body>
     <input type="file" name="" id="">
-    <button>click</button>
+    <button id="ask">ask</button>
+    <button id="next">next</button>
 </body>
-<!-- <script src="./script_bis.js" type="module"></script> -->
+<script src="./script_bis.js" type="module"></script>
 <script>
-    document.querySelector("button").addEventListener("click", () => {
-        let formData = new FormData();
-        formData.append("file", document.querySelector("input").files[0])
-        console.log("awaiting status");
-        fetch("/upload_record.php", {
-            method: "POST",
-            body: formData
-        })
-        .then((res) => {
-            console.log(res.status);
-            return res.json();
-        })
-        .then((json) => {
-            console.log(json);
-        })
-    })
+    // document.querySelector("button").addEventListener("click", () => {
+    //     let formData = new FormData();
+    //     formData.append("file", document.querySelector("input").files[0])
+    //     console.log("awaiting status");
+    //     fetch("/upload_record.php", {
+    //         method: "POST",
+    //         body: formData
+    //     })
+    //     .then((res) => {
+    //         console.log(res.status);
+    //         return res.json();
+    //     })
+    //     .then((json) => {
+    //         console.log(json);
+    //     })
+    // })
 </script>
 </html>
