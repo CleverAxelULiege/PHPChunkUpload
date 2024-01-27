@@ -18,6 +18,10 @@ class HeaderManager{
     public static function setCreatedStatus(){
         http_response_code(201);
     }
+    
+    public static function setUnprocessableEntityStatus(){
+        http_response_code(422);
+    }
 
     public static function setContentTypeToJson(){
         header('Content-Type: application/json');

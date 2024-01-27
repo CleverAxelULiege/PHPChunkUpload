@@ -1,0 +1,5 @@
+https://www.php.net/manual/en/features.file-upload.common-pitfalls.php
+https://www.php.net/manual/en/ini.core.php#ini.upload-max-filesize
+https://www.php.net/manual/en/ini.core.php#ini.post-max-size
+https://stackoverflow.com/questions/18567861/detect-if-uploaded-file-is-too-large
+https://stackoverflow.com/questions/52069439/upload-large-files-and-time-out-php-uploads

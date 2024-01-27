@@ -10,5 +10,6 @@ return [
         "no_duration" => "No recording duration received.",
         "recording_too_long" => "The length of your recording is too long. It shouldn't exceed :PLACEHOLDER seconds.",
         "recording_too_short" => "The length of your recording can't be less or equals than :PLACEHOLDER second(s).",
+        "file_empty_or_too_large" => "The chunk of file or file being sent is either missing or too big."
     ]
 ];

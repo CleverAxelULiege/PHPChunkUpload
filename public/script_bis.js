@@ -10,3 +10,7 @@ window.addEventListener("DOMContentLoaded", () => {
 INPUT_FILE.addEventListener("change", () => {
     uploadManager.setFile(INPUT_FILE.files[0]);
 });
+
+document.querySelector("button").addEventListener("click", () => {
+    
+})

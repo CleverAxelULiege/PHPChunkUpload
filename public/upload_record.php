@@ -7,14 +7,17 @@ use Upload\Traduction\Traduction;
 
 require(__DIR__ . "/../vendor/autoload.php");
 
+
 HeaderManager::setContentTypeToJson();
+preventLargeContentLengthOrFileTooBig();
 
 $payload = $_POST["payload"] ?? null;
 
 $requestUpload = Mapper::toRequestUpload(Mapper::jsonDecode($payload));
 $fileManager = new FileManager(Traduction::retrieve(), $requestUpload);
 
-if(!$fileManager->validateCSRFToken($requestUpload)){
+
+if (!$fileManager->validateCSRFToken($requestUpload)) {
     HeaderManager::setUnauthorizedStatus();
 
     echo json_encode([
@@ -23,17 +26,16 @@ if(!$fileManager->validateCSRFToken($requestUpload)){
     exit;
 }
 
-$successToMoveFile = $fileManager->moveUploadedFileToTempAndUpdateUploadState();
-if($successToMoveFile === false){
+$successToMoveFile = $fileManager->moveUploadedFileToTemp();
+if ($successToMoveFile === false) {
     HeaderManager::setServiceUnavailableStatus();
     echo json_encode([
-        "msg" => "Send again",
+        "msg" => "Resend file",
         "CSRFToken" => $fileManager->refreshCSRFToken()
     ]);
     exit;
 }
 
-HeaderManager::setCreatedStatus();
 echo json_encode([
     "msg" => "success",
     "CSRFToken" => $fileManager->refreshCSRFToken()

@@ -10,5 +10,6 @@ return [
         "no_duration" => "Aucune durée de vidéo reçue.",
         "recording_too_long" => "La durée de votre enregistrement est trop longue. Ça ne peut pas dépasser :PLACEHOLDER secondes.",
         "recording_too_short" => "La durée de votre enregistrement ne peut pas être inférieure ou égale à :PLACEHOLDER seconde(s).",
+        "file_empty_or_too_large" => "Le morceau de fichier ou fichier envoyé est soit manquant, soit trop grand."
     ]
 ];

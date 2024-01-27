@@ -4,7 +4,7 @@ const ASK_PERMISSION_TO_UPLOAD_LINK = "/ask_permission_upload_record.php";
 
 export class UploadManager {
 
-    /**@type {File|null} */
+    /**@type {Blob|null} */
     file = null;
 
     recordDuration = null;
@@ -16,14 +16,16 @@ export class UploadManager {
 
     abortEventListener = new AbortController();
 
+    /**
+     * @param {Blob} file 
+     */
     setFile(file){
         this.file = file;
-        this.getRecordDuration();
+        this.setRecordDuration();
     }
 
-    getRecordDuration() {
+    setRecordDuration() {
         if(this.recordDuration == null){
-            console.info("Aborting event listener")
             this.abortEventListener.abort();
         }
 
@@ -38,7 +40,6 @@ export class UploadManager {
             console.log(this.recordDuration);
             URL.revokeObjectURL(video.src);
         }, {once: true, signal: this.abortEventListener.signal});
-
     }
 
     async askPermissionToUpload() {

@@ -8,27 +8,21 @@ use Upload\Traduction\Traduction;
 require(__DIR__ . "/../vendor/autoload.php");
 
 HeaderManager::setContentTypeToJson();
+preventLargeContentLengthOrFileTooBig();
 
 $payload = $_POST["payload"] ?? null;
 
 $requestUpload = Mapper::toRequestUpload(Mapper::jsonDecode($payload));
 $fileManager = new FileManager(Traduction::retrieve(), $requestUpload);
 
-if (!$fileManager->fileRespectRule($requestUpload)) {
+if (!$fileManager->fileRespectRules()) {
     exit;
 }
 
-if ($fileManager->doesTempFolderExistAndActive($requestUpload)) {
-    echo json_encode([
-        "msg" => "to do"
-    ]);
-
-    exit;
-}
-
-$uploadState = $fileManager->createTempFolderAndGetState($requestUpload);
+$CSRFToken = $fileManager->createTempFolderAndGetCSRFToken();
 
 echo json_encode([
     "msg" => "success",
-    "CSRFToken" => $uploadState->CSRFToken
+    "CSRFToken" => $CSRFToken,
+    "chunkSize" => FileManager::MAX_CHUNK_FILE_SIZE_BYTES,
 ]);
