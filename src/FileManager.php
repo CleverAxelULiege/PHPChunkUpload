@@ -44,7 +44,7 @@ class FileManager
     /**
      * Le temps qu'un dossier temporaire peut-être actif et recevoir des fichiers
      */
-    const TEMP_FOLDER_ACTIVE_SECOND = 60 * 60 * 8;
+    const TEMP_FOLDER_LIFESPAN_SECOND = 60 * 60 * 8;
 
     const FILE_FIELD_NAME = "file";
 
@@ -110,6 +110,16 @@ class FileManager
         return true;
     }
 
+    /**
+     * Essayera de supprimer l'ancien dossier d'upload s'il existe à partir d'un ancien token de session
+     */
+    public function tryToRemoveOldTempDir()
+    {
+        if (is_dir(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload)) {
+            $this->removeUploadTempDir($this->requestUpload->sessionTokenUpload);
+        }
+    }
+
 
     private function getUploadStateFromRequest(RequestUploadDTO $requestUpload): null|UploadStateDTO
     {
@@ -145,7 +155,6 @@ class FileManager
         $fileExtension =  $fileExtension = pathinfo($this->requestUpload->fileName)['extension'] ?? "";
         $CSRFToken = $this->createRandomToken();
         $uploadState = new UploadStateDTO(
-            (new DateTime())->getTimestamp(),
             0,
             0,
             $fileExtension,
@@ -174,8 +183,10 @@ class FileManager
             return false;
         }
 
+        $pathToUploadState = FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload . "/upload_state.json";
+
         $currentTimestamp = strtotime("now");
-        if (($currentTimestamp - $this->uploadState->lastChunkFileReceivedAt) > FileManager::TEMP_FOLDER_ACTIVE_SECOND) {
+        if (($currentTimestamp - filemtime($pathToUploadState)) > FileManager::TEMP_FOLDER_LIFESPAN_SECOND) {
             return false;
         }
 
@@ -187,7 +198,7 @@ class FileManager
      */
     public function removeUploadTempDir(string $sessionTokenUpload): bool
     {
-        if(!is_dir(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $sessionTokenUpload)){
+        if (!is_dir(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $sessionTokenUpload)) {
             return false;
         }
 
@@ -202,7 +213,7 @@ class FileManager
     public function setSessionTokenUpload(string $token)
     {
         setcookie(FileManager::COOKIE_NAME, $token, [
-            'expires' => time() + FileManager::TEMP_FOLDER_ACTIVE_SECOND * 2,
+            'expires' => time() + FileManager::TEMP_FOLDER_LIFESPAN_SECOND * 2,
             'path' => '/',
             'secure' => true,
             'httponly' => true,
@@ -213,7 +224,7 @@ class FileManager
     public function removeSessionTokenUpload()
     {
         setcookie(FileManager::COOKIE_NAME, "", [
-            'expires' => time() - FileManager::TEMP_FOLDER_ACTIVE_SECOND * 2,
+            'expires' => time() - FileManager::TEMP_FOLDER_LIFESPAN_SECOND * 2,
             'path' => '/',
             'secure' => true,
             'httponly' => true,
@@ -236,7 +247,7 @@ class FileManager
      */
     public function moveUploadedFileToTemp(): bool
     {
-        if(!is_dir(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload)){
+        if (!is_dir(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload)) {
             $this->statusUploadedFile = FileManager::STATUS_DIRECTORY_DOESNT_EXIST;
             return false;
         }
@@ -266,7 +277,8 @@ class FileManager
         return hash_file("sha256", $_FILES[FileManager::FILE_FIELD_NAME]["tmp_name"]) === $this->uploadState->hashedFile;
     }
 
-    public function getUploadState(){
+    public function getUploadState()
+    {
         return $this->uploadState;
     }
 

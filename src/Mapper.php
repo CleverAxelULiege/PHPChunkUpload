@@ -11,7 +11,6 @@ class Mapper{
 
     public static function toUploadState(stdClass $payload){
         return new UploadStateDTO(
-            $payload->lastChunkFileReceivedAt,
             $payload->currentChunkFile,
             $payload->currentFileSize,
             $payload->extension,
