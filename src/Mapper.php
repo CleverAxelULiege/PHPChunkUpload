@@ -23,7 +23,7 @@ class Mapper{
         $requestUpload = new RequestUploadDTO();
         $requestUpload->fileName = $payload->fileName ?? null;
         $requestUpload->fileSize = $payload->fileSize ?? null;
-        $requestUpload->recordDuration = $payload->recordDuration ?? null;
+        $requestUpload->recordDuration = (int)ceil($payload->recordDuration ?? 0);
         $requestUpload->CSRFtoken = $payload->CSRFtoken ?? null;
         $requestUpload->sessionTokenUpload = $_COOKIE[FileManager::COOKIE_NAME] ?? "UNKOWN";
 

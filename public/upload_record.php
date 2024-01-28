@@ -39,7 +39,8 @@ if ($successToMoveFile === false) {
                 "CSRFToken" => $fileManager->refreshCSRFToken()
             ]);
             break;
-
+        
+        //can remove CSRF Token validate anyway
         case FileManager::STATUS_DIRECTORY_DOESNT_EXIST:
             HeaderManager::setBadRequestStatus();
             echo json_encode([
