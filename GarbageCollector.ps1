@@ -22,6 +22,11 @@ $currentUnixTimeStamp = ([int64](New-TimeSpan -Start $startUnixTimeStamp -End $c
 
 $directories = Get-ChildItem -Directory -Name
 
+if($directories.Count -eq 0){
+    Write-Warning "No temp directory found"
+    exit;
+}
+
 foreach ($directory in $directories){
     $relaTivedirectory = ".\" + $directory
     $files = Get-ChildItem -Path $relaTivedirectory -File -Name -Include *.json
