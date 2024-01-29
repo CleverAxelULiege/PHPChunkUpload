@@ -35,7 +35,23 @@ if ($successToMoveFile === false) {
         case FileManager::STATUS_FAILED_TO_MOVE_FILE:
             HeaderManager::setServiceUnavailableStatus();
             echo json_encode([
-                "msg" => "Resend file",
+                "msg" => "Resend file.",
+                "CSRFToken" => $fileManager->refreshCSRFToken()
+            ]);
+            break;
+
+        case FileManager::STATUS_CHUNK_TOO_BIG:
+            HeaderManager::setBadRequestStatus();
+            echo json_encode([
+                "msg" => "Chunk received too big. Must be at or below :" . FileManager::MAX_CHUNK_SIZE_BYTES,
+                "CSRFToken" => $fileManager->refreshCSRFToken()
+            ]);
+            break;
+
+        case FileManager::STATUS_NO_FILE_SENT:
+            HeaderManager::setBadRequestStatus();
+            echo json_encode([
+                "msg" => "No file/chunk file sent.",
                 "CSRFToken" => $fileManager->refreshCSRFToken()
             ]);
             break;

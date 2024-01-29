@@ -12,12 +12,19 @@ class FileManager
 
     const STATUS_FAILED_TO_MOVE_FILE = 0;
     const STATUS_DIRECTORY_DOESNT_EXIST = 1;
+    const STATUS_CHUNK_TOO_BIG = 2;
+    const STATUS_NO_FILE_SENT = 2;
     public int $statusUploadedFile = -1;
 
     public function __construct(private array $traduction, private RequestUploadDTO $requestUpload)
     {
         $this->uploadState = $this->getUploadStateFromRequest($requestUpload);
         $this->buildUploadTempDirectoryIfDoesntExist();
+
+        //1 chance sur 10
+        if (rand(0, 9) === 0) {
+            $this->callGarbageCollector();
+        }
     }
 
     const PATH_TO_UPLOAD_TEMP = __DIR__ . "/../upload/temp";
@@ -28,6 +35,11 @@ class FileManager
      * Mettre à NULL pour ne pas en tenir compte
      */
     const MAX_FILE_SIZE_BYTES = 1000 * 1000 * 250;
+
+    /**
+     * Mettre à NULL pour ne pas en tenir compte
+     */
+    const MAX_CHUNK_SIZE_BYTES = 1000 * 1000;
 
     /**
      * Mettre à NULL pour ne pas en tenir compte
@@ -252,6 +264,16 @@ class FileManager
             return false;
         }
 
+        if(empty($_FILES[FileManager::FILE_FIELD_NAME]) || $_FILES[FileManager::FILE_FIELD_NAME]["size"] <= 0){
+            $this->statusUploadedFile = FileManager::STATUS_NO_FILE_SENT;
+            return false;
+        }
+
+        if($_FILES[FileManager::FILE_FIELD_NAME]["size"] > FileManager::MAX_CHUNK_SIZE_BYTES){
+            $this->statusUploadedFile = FileManager::STATUS_CHUNK_TOO_BIG;
+            return false;
+        }
+
         $newFileName = $this->uploadState->currentChunkFile . ".bin";
         $pathToNewFile = FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload . "/" . $newFileName;
         $successToMoveFile = move_uploaded_file($_FILES[FileManager::FILE_FIELD_NAME]["tmp_name"], $pathToNewFile);
@@ -300,5 +322,23 @@ class FileManager
     public function getNextChunk()
     {
         return $this->uploadState->currentFileSize;
+    }
+
+    private function callGarbageCollector($force = false)
+    {
+        //https://stackoverflow.com/questions/45953/php-execute-a-background-process#45966
+        //https://www.php.net/manual/fr/function.popen.php
+        $pathToScript = "D:\php_projects\upload\src\GarbageCollector.ps1";
+
+        $handle = null;
+        if ($force) {
+            $handle = popen("start " . "powershell -executionpolicy bypass -file " . $pathToScript . " -force", "r");
+        } else {
+            $handle = popen("start " . "powershell -executionpolicy bypass -file " . $pathToScript, "r");
+        }
+
+        if ($handle !== false) {
+            pclose($handle);
+        }
     }
 }

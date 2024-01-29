@@ -19,8 +19,6 @@ if (!$fileManager->fileRespectRules()) {
     exit;
 }
 
-$fileManager->tryToRemoveOldTempDir();
-
 $CSRFToken = $fileManager->createTempFolderAndGetCSRFToken();
 
 echo json_encode([

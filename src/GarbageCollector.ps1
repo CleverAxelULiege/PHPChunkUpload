@@ -3,7 +3,7 @@
  )
 
 
-$pathToTemp = "C:\PHPProjects\PHPChunkUpload\upload\temp"
+$pathToTemp = "D:\php_projects\upload\upload\temp"
 $formatDate = "+%Y-%m-%d %H:%M:%S"
 $maxTimeLifeSpan = 60 * 60 * 8
 
