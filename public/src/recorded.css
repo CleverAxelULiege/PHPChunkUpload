@@ -1,0 +1,102 @@
+#root>div.recorded_element_container {
+    margin: 10px auto 10px auto;
+}
+
+#root>div.recorded_element_container h2 {
+    text-align: left;
+}
+
+.download_recorded_video_container {
+    margin-top: 10px;
+    display: flex;
+}
+
+.download_recorded_video_container {
+    margin-top: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.download_recorded_video_button,
+.upload_recorded_video_button {
+    border-style: none;
+    outline: none;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 10px;
+    background-color: steelblue;
+    color: white;
+    border-radius: 10px;
+    border: 2px solid steelblue;
+    transition: all 150ms ease-in-out;
+    cursor: pointer;
+}
+
+.recorded_element_container .separator {
+    border: none;
+    margin: 10px 0;
+    border-top: 1px solid var(--dark_gray);
+}
+
+.recorded_progress_bar_upload {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    height: 30px;
+    border-radius: 9999px;
+    background: repeating-linear-gradient(-45deg,
+            var(--dark_gray),
+            var(--dark_gray) 10px,
+            var(--gray) 10px,
+            var(--gray) 20px);
+}
+
+.recorded_progress_bar_upload .progress{
+    position: absolute;
+    background-color: white;
+    padding: 0px 5px;
+    color: black;
+    font-size: 18px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 9999px;
+}
+
+.recorded_progress_bar_upload .bar{
+    height: 100%;
+    left: 0;
+    background-color: rgb(60, 89, 112); 
+    width: 0%;
+    border-radius: 9999px;
+    transition: all 150ms ease-in-out;
+}
+
+.recorded_message_upload{
+    font-size: 18px;
+}
+
+.recorded_message_upload > span{
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.recorded_message_upload > span.hidden{
+    display: none;
+}
+
+.recorded_message_upload .error{
+    color: var(--red);
+}
+
+@media (hover: hover) {
+
+    .download_recorded_video_button:hover,
+    .download_recorded_video_button:focus,
+    .upload_recorded_video_button:hover,
+    .upload_recorded_video_button:focus {
+        color: steelblue;
+        background-color: white;
+    }
+}

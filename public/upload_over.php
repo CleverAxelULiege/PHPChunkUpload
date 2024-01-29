@@ -1,14 +1,37 @@
 <?php
 
 use Upload\FileManager;
+use Upload\HeaderManager;
+use Upload\Mapper;
+use Upload\StatusCodeManager;
+use Upload\Traduction\Traduction;
+
 require(__DIR__ . "/../vendor/autoload.php");
-$fileParts = glob(FileManager::PATH_TO_UPLOAD_TEMP . "/" . "3a1704ad673e01cf5831f29dd7b7bda7/" . "*.bin");
 
-sort($fileParts, SORT_NATURAL);
 
-$finalFile = fopen(__DIR__ . "/test.mp4", "w");
-foreach($fileParts as $part){
-    $chunk = file_get_contents($part);
-    fwrite($finalFile, $chunk);
+HeaderManager::setContentTypeToJson();
+preventLargeContentLengthOrFileTooBig();
+
+$payload = $_POST["payload"] ?? null;
+
+$requestUpload = Mapper::toRequestUpload(Mapper::jsonDecode($payload));
+$fileManager = new FileManager(Traduction::retrieve(), $requestUpload);
+
+
+if (!$fileManager->validateCSRFToken($requestUpload)) {
+    HeaderManager::setUnauthorizedStatus();
+
+    echo json_encode([
+        "msg" => "Failed to validate the CSRF token.",
+        "status" => StatusCodeManager::INVALID_CSRF_TOKEN
+    ]);
+    exit;
 }
-fclose($finalFile);
+
+
+$fileManager->buildFinaleVideo();
+$fileManager->removeUploadTempDir($requestUpload->sessionTokenUpload);
+
+echo json_encode([
+    "msg" => "success"
+]);

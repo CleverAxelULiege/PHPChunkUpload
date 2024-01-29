@@ -1,11 +1,10 @@
 const CHUNK_SIZE = 1000 * 1000;
 const UPLOAD_RECORD_LINK = "/upload_record.php";
 const ASK_PERMISSION_TO_UPLOAD_LINK = "/ask_permission_upload_record.php";
+const UPLOAD_OVER_LINK = "/upload_over.php";
 const ATTEMPTS_BEFORE_ABORTING = 5;
 
 const STATUS = {
-    FAILED_TO_CONNECT: -2,
-    CONTENT_LENGTH_TOO_LONG: -1,
     NO_FILE_SENT: 0,
     FILE_TOO_BIG: 1,
     FAILED_TO_MOVE_FILE: 2,
@@ -13,6 +12,8 @@ const STATUS = {
     INVALID_CSRF_TOKEN: 4,
     TOTAL_SIZE_EXCEEDED: 5,
     OK: 6,
+    CONTENT_LENGTH_TOO_LONG: 7,
+    FAILED_TO_CONNECT: 8,
 }
 
 export class UploadManager {
@@ -24,6 +25,17 @@ export class UploadManager {
     end = CHUNK_SIZE;
 
     CSRFToken = "";
+
+
+    constructor(progressBar, message){
+        /**@type {HTMLDivElement} */
+        this.progressBar = progressBar
+        /**@type {HTMLDivElement} */
+        this.message = message;
+        
+        this.message.classList.remove("hidden");
+        this.progressBar.classList.remove("hidden");
+    }
 
     /**
      * @param {Blob} file 
@@ -66,13 +78,58 @@ export class UploadManager {
                     attempt = 0;
                     this.start = this.end;
                     this.end = this.start + CHUNK_SIZE;
-                    console.info((this.start / this.file.size) * 100);
+                    let progress = Math.floor((this.start / this.file.size) * 100);
+                    if(progress > 100){
+                        progress = 100;
+                    }
+
+                    this.progressBar.querySelector(".progress").innerHTML = `${progress}%`;
+                    this.progressBar.querySelector(".bar").style.width = `${progress}%`;
+                    // console.info((this.start / this.file.size) * 100);
                 } else {
                     attempt++;
                 }
             } else {
                 break;
             }
+        }
+
+        if(statusUpload == STATUS.OK){
+            this.uploadComplete();
+        }
+
+    }
+
+    async uploadComplete(){
+        let formData = new FormData();
+        formData.append("payload", JSON.stringify({
+            CSRFtoken: this.CSRFToken,
+        }));
+        formData.append("file", this.file.slice(this.start, this.end))
+
+        try {
+            let response = await fetch(UPLOAD_OVER_LINK, {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.status == 422) {
+                return STATUS.CONTENT_LENGTH_TOO_LONG;
+            }
+
+            let json = await response.json();
+
+            this.message.querySelector(".in_progress").classList.add("hidden");
+            this.message.querySelector(".complete").classList.remove("hidden");
+
+            if (json.status != STATUS.OK) {
+                console.log(json);
+            }
+
+            return json.status;
+        } catch {
+            window.alert("Failed to connect to the server. Please contact the responsible person");
+            return STATUS.FAILED_TO_CONNECT;
         }
     }
 
@@ -133,7 +190,7 @@ export class UploadManager {
         formData.append("payload", JSON.stringify({
             fileSize: this.file.size,
             recordDuration: videoDuration,
-            fileName: this.file.name,
+            fileName: this.file.name ?? Date.now().toString() + "_record.webm",   
             CSRFtoken: this.CSRFToken,
         }));
 
@@ -155,11 +212,11 @@ export class UploadManager {
                 this.asyncUploadFile();
             } else {
                 //display error messages;
-                console.log(json.msg);
+                console.log(json);
             }
 
-        } catch {
-            window.alert("Failed to connect to the server. Please contact the responsible person");
+        } catch(e) {
+            console.log(e);
         }
 
 
