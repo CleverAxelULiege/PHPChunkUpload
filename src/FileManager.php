@@ -13,7 +13,7 @@ class FileManager
     const STATUS_FAILED_TO_MOVE_FILE = 0;
     const STATUS_DIRECTORY_DOESNT_EXIST = 1;
     const STATUS_CHUNK_TOO_BIG = 2;
-    const STATUS_NO_FILE_SENT = 2;
+    const STATUS_NO_FILE_SENT = 3;
     public int $statusUploadedFile = -1;
 
     public function __construct(private array $traduction, private RequestUploadDTO $requestUpload)

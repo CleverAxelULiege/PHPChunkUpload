@@ -1,49 +1,91 @@
-const CHUNK_PART = 1000 * 1000;
+const CHUNK_SIZE = 1000 * 1000;
 const UPLOAD_RECORD_LINK = "/upload_record.php";
 const ASK_PERMISSION_TO_UPLOAD_LINK = "/ask_permission_upload_record.php";
+const ATTEMPTS_BEFORE_ABORTING = 5;
+
+const STATUS = {
+    FAILED_TO_CONNECT: -2,
+    CONTENT_LENGTH_TOO_LONG: -1,
+    NO_FILE_SENT: 0,
+    FILE_TOO_BIG: 1,
+    FAILED_TO_MOVE_FILE: 2,
+    DIRECTORY_DOESNT_EXIST: 3,
+    INVALID_CSRF_TOKEN: 4,
+    TOTAL_SIZE_EXCEEDED: 5,
+    OK: 6,
+}
 
 export class UploadManager {
 
     /**@type {Blob|null} */
     file = null;
 
-    recordDuration = null;
-
     start = 0;
-    end = CHUNK_PART;
+    end = CHUNK_SIZE;
 
     CSRFToken = "";
-
-    abortEventListener = new AbortController();
 
     /**
      * @param {Blob} file 
      */
-    setFile(file){
+    setFile(file) {
         this.file = file;
-        this.setRecordDuration();
     }
 
-    setRecordDuration() {
-        if(this.recordDuration == null){
-            this.abortEventListener.abort();
+    asyncGetRecordDuration() {
+        return new Promise((resolve) => {
+            let video = document.createElement("video");
+            video.src = URL.createObjectURL(this.file);
+            video.onloadedmetadata = () => {
+                URL.revokeObjectURL(video.src);
+                video.onloadedmetadata = null;
+                resolve(video.duration);
+            };
+
+        })
+    }
+
+    async asyncUploadFile() {
+        if (this.file == null) {
+            console.error("No file given");
+            return;
         }
 
-        this.abortEventListener = new AbortController();
-        this.recordDuration = null;
+        if (this.CSRFToken == "") {
+            console.error("No CSRF token given");
+            return;
+        }
 
-        let video = document.createElement("video");
-        video.src = URL.createObjectURL(this.file);
+        let statusUpload = null
+        let attempt = 0;
+        while (this.start < this.file.size) {
+            statusUpload = await this.asyncUploadChunk();
 
-        video.addEventListener("loadedmetadata", () => {
-            this.recordDuration = video.duration;
-            console.log(this.recordDuration);
-            URL.revokeObjectURL(video.src);
-        }, {once: true, signal: this.abortEventListener.signal});
+            if((statusUpload == STATUS.OK || statusUpload == STATUS.FAILED_TO_MOVE_FILE) && attempt < ATTEMPTS_BEFORE_ABORTING){
+                if(statusUpload == STATUS.OK){
+                    attempt = 0;
+                    this.start = this.end;
+                    this.end = this.start + CHUNK_SIZE;
+                    console.info((this.start / this.file.size) * 100);
+                } else {
+                    attempt++;
+                }
+            } else {
+                break;
+            }
+        }
     }
 
-    async uploadChunk(){
-        if(this.CSRFToken == ""){
+    /**
+     * @returns {Promise<number>}
+     */
+    async asyncUploadChunk() {
+        if (this.file == null) {
+            console.error("No file given");
+            return;
+        }
+
+        if (this.CSRFToken == "") {
             console.error("No CSRF token given");
             return;
         }
@@ -54,42 +96,72 @@ export class UploadManager {
         }));
         formData.append("file", this.file.slice(this.start, this.end))
 
-        let response = await fetch(UPLOAD_RECORD_LINK, {
-            method: "POST",
-            body: formData
-        });
+        try {
+            let response = await fetch(UPLOAD_RECORD_LINK, {
+                method: "POST",
+                body: formData
+            });
 
-        let json = await response.json();
-        console.log(json);
-        this.CSRFToken = json.CSRFToken;
+            if (response.status == 422) {
+                return STATUS.CONTENT_LENGTH_TOO_LONG;
+            }
 
-        this.start = this.end;
-        this.end = this.start + CHUNK_PART;
+            let json = await response.json();
+            this.CSRFToken = json.CSRFToken ?? "";
+
+            if (json.status != STATUS.OK) {
+                console.log(json);
+            }
+
+            return json.status;
+        } catch {
+            window.alert("Failed to connect to the server. Please contact the responsible person");
+            return STATUS.FAILED_TO_CONNECT;
+        }
+
+
     }
 
-    async askPermissionToUpload() {
-        if (this.recordDuration == null) {
-            window.alert("File duration not yet retrieved, please wait a few more seconds");
+    async asyncAskPermissionToUpload() {
+        if (this.file === null) {
+            window.alert("No file given to upload");
             return;
         }
+        let videoDuration = await this.asyncGetRecordDuration();
 
         let formData = new FormData();
         formData.append("payload", JSON.stringify({
             fileSize: this.file.size,
-            recordDuration: this.recordDuration,
+            recordDuration: videoDuration,
             fileName: this.file.name,
             CSRFtoken: this.CSRFToken,
         }));
 
-        let response = await fetch(ASK_PERMISSION_TO_UPLOAD_LINK, {
-            method: "POST",
-            body: formData
-        });
+        try {
+            let response = await fetch(ASK_PERMISSION_TO_UPLOAD_LINK, {
+                method: "POST",
+                body: formData
+            });
 
-        let json = await response.json();
-        console.log(json);
-        this.CSRFToken = json.CSRFToken;
+            let json = await response.json();
 
-        
+            if (response.status == 422) {
+                window.alert("Somehow, the content length of your payload was too large and you shouldn't be able to see this message.");
+                return;
+            }
+
+            if (response.ok) {
+                this.CSRFToken = json.CSRFToken;
+                this.asyncUploadFile();
+            } else {
+                //display error messages;
+                console.log(json.msg);
+            }
+
+        } catch {
+            window.alert("Failed to connect to the server. Please contact the responsible person");
+        }
+
+
     }
 }

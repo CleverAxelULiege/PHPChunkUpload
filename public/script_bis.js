@@ -12,8 +12,9 @@ INPUT_FILE.addEventListener("change", () => {
 });
 
 document.querySelector("#ask").addEventListener("click", () => {
-    uploadManager.askPermissionToUpload();
+    uploadManager.asyncAskPermissionToUpload();
+    // uploadManager.asyncUploadChunk();
 })
 document.querySelector("#next").addEventListener("click", () => {
-    uploadManager.uploadChunk();
+    uploadManager.asyncUploadChunk();
 })

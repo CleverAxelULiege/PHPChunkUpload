@@ -2,7 +2,7 @@
 
 use Upload\FileManager;
 require(__DIR__ . "/../vendor/autoload.php");
-$fileParts = glob(FileManager::PATH_TO_UPLOAD_TEMP . "/" . "5e45ba784f11991a2a8792b357bb0d6c/" . "*.bin");
+$fileParts = glob(FileManager::PATH_TO_UPLOAD_TEMP . "/" . "3a1704ad673e01cf5831f29dd7b7bda7/" . "*.bin");
 
 sort($fileParts, SORT_NATURAL);
 

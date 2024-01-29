@@ -3,6 +3,7 @@
 use Upload\FileManager;
 use Upload\HeaderManager;
 use Upload\Mapper;
+use Upload\StatusCodeManager;
 use Upload\Traduction\Traduction;
 
 require(__DIR__ . "/../vendor/autoload.php");
@@ -22,6 +23,7 @@ if (!$fileManager->validateCSRFToken($requestUpload)) {
 
     echo json_encode([
         "msg" => "Failed to validate the CSRF token.",
+        "status" => StatusCodeManager::INVALID_CSRF_TOKEN
     ]);
     exit;
 }
@@ -36,7 +38,8 @@ if ($successToMoveFile === false) {
             HeaderManager::setServiceUnavailableStatus();
             echo json_encode([
                 "msg" => "Resend file.",
-                "CSRFToken" => $fileManager->refreshCSRFToken()
+                "CSRFToken" => $fileManager->refreshCSRFToken(),
+                "status" => StatusCodeManager::FAILED_TO_MOVE_FILE
             ]);
             break;
 
@@ -44,7 +47,7 @@ if ($successToMoveFile === false) {
             HeaderManager::setBadRequestStatus();
             echo json_encode([
                 "msg" => "Chunk received too big. Must be at or below :" . FileManager::MAX_CHUNK_SIZE_BYTES,
-                "CSRFToken" => $fileManager->refreshCSRFToken()
+                "status" => StatusCodeManager::FILE_TOO_BIG
             ]);
             break;
 
@@ -52,15 +55,7 @@ if ($successToMoveFile === false) {
             HeaderManager::setBadRequestStatus();
             echo json_encode([
                 "msg" => "No file/chunk file sent.",
-                "CSRFToken" => $fileManager->refreshCSRFToken()
-            ]);
-            break;
-        
-        //can remove CSRF Token validate anyway
-        case FileManager::STATUS_DIRECTORY_DOESNT_EXIST:
-            HeaderManager::setBadRequestStatus();
-            echo json_encode([
-                "msg" => "Failed to upload. Your session is missing.",
+                "status" => StatusCodeManager::NO_FILE_SENT
             ]);
             break;
     }
@@ -73,6 +68,7 @@ if ($fileManager->getUploadState()->currentFileSize > FileManager::MAX_FILE_SIZE
     HeaderManager::setBadRequestStatus();
     echo json_encode([
         "msg" => "Your file has exceeded the max size allowed. Somehow you passed through the first validation while doing some shenanigans with the JS. Congrats.",
+        "status" => StatusCodeManager::TOTAL_SIZE_EXCEEDED,
     ]);
     exit;
 }
@@ -82,5 +78,6 @@ $fileManager->setSessionTokenUpload($requestUpload->sessionTokenUpload);
 
 echo json_encode([
     "msg" => "success",
-    "CSRFToken" => $fileManager->refreshCSRFToken()
+    "CSRFToken" => $fileManager->refreshCSRFToken(),
+    "status" => StatusCodeManager::OK
 ]);
