@@ -1,7 +1,7 @@
 const CHUNK_SIZE = 1000 * 1000;
-const UPLOAD_RECORD_LINK = "/upload_record.php";
-const ASK_PERMISSION_TO_UPLOAD_LINK = "/ask_permission_upload_record.php";
-const UPLOAD_OVER_LINK = "/upload_over.php";
+const UPLOAD_RECORD_LINK = "/upload_record.php?lng=" + document.documentElement.lang;
+const ASK_PERMISSION_TO_UPLOAD_LINK = "/ask_permission_upload_record.php?lng=" + document.documentElement.lang;
+const UPLOAD_OVER_LINK = "/upload_over.php?lng=" + document.documentElement.lang;
 const ATTEMPTS_BEFORE_ABORTING = 5;
 
 const STATUS = {
@@ -32,9 +32,8 @@ export class UploadManager {
         this.progressBar = progressBar
         /**@type {HTMLDivElement} */
         this.message = message;
-        
-        this.message.classList.remove("hidden");
-        this.progressBar.classList.remove("hidden");
+
+
     }
 
     /**
@@ -206,19 +205,30 @@ export class UploadManager {
                 window.alert("Somehow, the content length of your payload was too large and you shouldn't be able to see this message.");
                 return;
             }
-
+            this.message.querySelector(".error_message").innerHTML = ``;
+            this.message.classList.remove("hidden");
             if (response.ok) {
                 this.CSRFToken = json.CSRFToken;
+                this.progressBar.classList.remove("hidden");
                 this.asyncUploadFile();
+                return true;
             } else {
-                //display error messages;
-                console.log(json);
+                
+                this.displayMessage(json.msg)
+                return false;
             }
 
         } catch(e) {
             console.log(e);
+            return false;
         }
+    }
 
-
+    displayMessage(msg){
+        if(typeof msg == "string"){
+            this.message.querySelector(".error_message").innerHTML = `<p>${msg}</p>`;
+        } else {
+            this.message.querySelector(".error_message").innerHTML = `<ul>${msg.map((m) => `<li>${m}</li>`).join("")}</ul>`;
+        }
     }
 }

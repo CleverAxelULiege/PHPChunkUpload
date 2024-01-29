@@ -86,8 +86,12 @@
     display: none;
 }
 
-.recorded_message_upload .error{
+.recorded_message_upload .error, .recorded_message_upload .error_message{
     color: var(--red);
+}
+
+.recorded_message_upload .error_message ul {
+    padding-left: 20px;
 }
 
 @media (hover: hover) {

@@ -114,6 +114,9 @@ export class Recorder {
     isPaused = false;
 
     /**@private */
+    waitingForUploadResponse = false;
+
+    /**@private */
     isFullscreen = false;
 
     /**@private */
@@ -288,14 +291,20 @@ export class Recorder {
             if(!window.confirm("Vous êtes sur le point de mettre en ligne votre enregistrement, nous vous conseillons d'être connecté en WI-FI ou par câble pour effectuer cette tâche, continuer ?")){
                 return;
             }
-
-            document.querySelector("#root").removeChild(document.querySelector(".permission_to_record_from_site"));
-            document.querySelector("#root").removeChild(document.querySelector(".recorder_container"));
-
-            this.element.UPLOAD_RECORDING_BUTTON.parentElement.removeChild(this.element.UPLOAD_RECORDING_BUTTON);
-            let uploadManager = new UploadManager(document.querySelector(".recorded_progress_bar_upload"), document.querySelector(".recorded_message_upload"));
+            let uploadManager = new UploadManager(document.querySelector(".recorded_progress_bar_upload"), document.querySelector(".recorded_message_upload"), this.element.UPLOAD_RECORDING_BUTTON);
             uploadManager.setFile(this.recordedBlob);
-            uploadManager.asyncAskPermissionToUpload();
+
+            this.waitingForUploadResponse = true;
+            this.element.OPEN_RECORDER_BUTTON.disabled = true;
+            uploadManager.asyncAskPermissionToUpload().then((hasStarted) => {
+                this.waitingForUploadResponse = false;
+                this.element.OPEN_RECORDER_BUTTON.disabled = false;
+                if(hasStarted){
+                    document.querySelector("#root").removeChild(document.querySelector(".permission_to_record_from_site"));
+                    document.querySelector("#root").removeChild(document.querySelector(".recorder_container"));
+                    this.element.UPLOAD_RECORDING_BUTTON.parentElement.removeChild(this.element.UPLOAD_RECORDING_BUTTON);
+                }
+            });
         });
 
         return this;
@@ -385,6 +394,11 @@ export class Recorder {
     openRecorder() {
         if (this.mediaStream == null) {
             window.alert("No media stream available, the record will fail.");
+            return;
+        }
+
+        if(this.waitingForUploadResponse){
+            window.alert("Waiting for the response from the server")
             return;
         }
 

@@ -303,7 +303,7 @@ export class Page {
                 </div>
 
                 <div class="recorded_message_upload hidden">
-                    <span class="in_progress">Votre enregistrement est en cours de transfert merci de ne pas quitter cette page.</span>
+                    <span class="in_progress hidden">Votre enregistrement est en cours de transfert merci de ne pas quitter cette page.</span>
                     <span class="complete hidden">Transfert terminé !</span>
                     <span class="error hidden">Oh, oh, une erreur est survenue et a arrêté votre transfert</span>
                     <div class="error_message">

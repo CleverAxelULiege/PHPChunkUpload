@@ -160,6 +160,11 @@ main>.loader_container .loader {
     transition: all 150ms ease-in-out;
 }
 
+.display_recorder_button:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /*Barre de séparation entre l'icone de mic et de vidéo*/
 .display_recorder_button::after {
     content: "";
@@ -174,12 +179,12 @@ main>.loader_container .loader {
 }
 
 @media (hover: hover) {
-    .display_recorder_button:hover {
+    .display_recorder_button:not(:disabled):hover {
         fill: white;
         background-color: steelblue;
     }
 
-    .display_recorder_button:hover::after {
+    .display_recorder_button:not(:disabled):hover::after {
         background-color: white;
     }
 }
