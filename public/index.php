@@ -1,32 +1,29 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <!-- https://stackoverflow.com/questions/29454982/javascript-buffer-video-from-blobs-source -->
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./src/style.css">
+    <link rel="stylesheet" href="./src/recorded.css">
+    <link rel="stylesheet" href="./src/video_player.css">
+    <link rel="stylesheet" href="./src/toggle_switch.css">
+    <title>Js recorder</title>
 </head>
+
 <body>
-    <input type="file" name="" id="">
-    <button id="ask">ask</button>
-    <button id="next">next</button>
+    <main>
+
+        <div class="loader_container">
+            <div class="loader"></div>
+            <h2></h2>
+        </div>
+        
+        <div id="root"></div>
+    </main>
 </body>
-<script src="./script_bis.js" type="module"></script>
-<script>
-    // document.querySelector("button").addEventListener("click", () => {
-    //     let formData = new FormData();
-    //     formData.append("file", document.querySelector("input").files[0])
-    //     console.log("awaiting status");
-    //     fetch("/upload_record.php", {
-    //         method: "POST",
-    //         body: formData
-    //     })
-    //     .then((res) => {
-    //         console.log(res.status);
-    //         return res.json();
-    //     })
-    //     .then((json) => {
-    //         console.log(json);
-    //     })
-    // })
-</script>
+<script type="module" src="./src/main.js"></script>
+
 </html>

@@ -20,6 +20,7 @@ class FileManager
     {
         $this->uploadState = $this->getUploadStateFromRequest($requestUpload);
         $this->buildUploadTempDirectoryIfDoesntExist();
+        $this->buildUploadBuildDirectoryIfDoesntExist();
 
         //1 chance sur 10
         if (rand(0, 9) === 0) {
@@ -28,6 +29,7 @@ class FileManager
     }
 
     const PATH_TO_UPLOAD_TEMP = __DIR__ . "/../upload/temp";
+    const PATH_TO_UPLOAD_BUILD = __DIR__ . "/../upload/build";
 
     const COOKIE_NAME = "session_token_upload";
 
@@ -67,6 +69,13 @@ class FileManager
         }
     }
 
+    private function buildUploadBuildDirectoryIfDoesntExist(): void
+    {
+        if (!is_dir(FileManager::PATH_TO_UPLOAD_BUILD)) {
+            mkdir(FileManager::PATH_TO_UPLOAD_BUILD, 0777, true);
+        }
+    }
+
     /**
      * Valide les informations concernant le fichier.
      * Pour le moment aucun fichier n'a été upload. Seulement les informations de base envoyées par AJAX :
@@ -81,7 +90,7 @@ class FileManager
             $errorMessages[] = $this->traduction["file"]["no_file_name"];
         }
 
-        $fileExtension = pathinfo($this->requestUpload->fileName)['extension'] ?? "";
+        $fileExtension = pathinfo($this->requestUpload->fileName ?? "")['extension'] ?? "";
 
         if (!in_array($fileExtension, FileManager::ALLOWED_EXTENSIONS)) {
             $errorMessages[] = str_replace(":PLACEHOLDER", implode(", ", FileManager::ALLOWED_EXTENSIONS), $this->traduction["file"]["unallowed_extension"]);
@@ -115,7 +124,7 @@ class FileManager
             HeaderManager::setBadRequestStatus();
             echo json_encode([
                 "msg" => $errorMessages
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
             return false;
         }
 
@@ -264,12 +273,12 @@ class FileManager
             return false;
         }
 
-        if(empty($_FILES[FileManager::FILE_FIELD_NAME]) || $_FILES[FileManager::FILE_FIELD_NAME]["size"] <= 0){
+        if (empty($_FILES[FileManager::FILE_FIELD_NAME]) || $_FILES[FileManager::FILE_FIELD_NAME]["size"] <= 0) {
             $this->statusUploadedFile = FileManager::STATUS_NO_FILE_SENT;
             return false;
         }
 
-        if($_FILES[FileManager::FILE_FIELD_NAME]["size"] > FileManager::MAX_CHUNK_SIZE_BYTES){
+        if ($_FILES[FileManager::FILE_FIELD_NAME]["size"] > FileManager::MAX_CHUNK_SIZE_BYTES) {
             $this->statusUploadedFile = FileManager::STATUS_CHUNK_TOO_BIG;
             return false;
         }
@@ -340,5 +349,19 @@ class FileManager
         if ($handle !== false) {
             pclose($handle);
         }
+    }
+
+    public function buildFinaleVideo()
+    {
+        $fileParts = glob(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload . "/*.bin");
+
+        sort($fileParts, SORT_NATURAL);
+
+        $finalFile = fopen(FileManager::PATH_TO_UPLOAD_BUILD . "/" . date("Ymdhis") . "_" . $this->requestUpload->sessionTokenUpload . "." . $this->uploadState->extension, "w");
+        foreach ($fileParts as $part) {
+            $chunk = file_get_contents($part);
+            fwrite($finalFile, $chunk);
+        }
+        fclose($finalFile);
     }
 }
