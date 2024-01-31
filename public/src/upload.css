@@ -77,12 +77,12 @@
     display: none;
 }
 
-.recorded_message_upload_error{
+.recorded_message_upload_error, .prerecorded_message_upload_error{
     color: var(--red);
     padding: 5px;
     font-size: 18px;
 }
 
-.recorded_message_upload_error ul{
+.recorded_message_upload_error ul, .prerecorded_message_upload_error ul{
     padding-left: 20px;
 }

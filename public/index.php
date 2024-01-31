@@ -24,12 +24,6 @@ define("TRADUCTION", Traduction::retrieve());
 
 <body>
     <main>
-
-        <!-- <div class="loader_container">
-            <div class="loader"></div>
-            <h2></h2>
-        </div> -->
-
         <div id="root">
 
             <div class="upload_file_container">
@@ -39,10 +33,21 @@ define("TRADUCTION", Traduction::retrieve());
                         <svg width="30" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                             <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
                         </svg>
-                        <h3>Sélectionner un fichier à mettre en ligne</h3>
+                        <h3><?= TRADUCTION["uploadFile"]["selectFile"] ?></h3>
                         <input type="file" id="prerecorded_file" accept="video/mp4, video/webm">
                     </label>
                 </div>
+                <h4 class="file_name"></h4>
+                <div class="button_upload_container">
+                    <button class="upload_prerecorded_video_button" disabled>
+                        <?= TRADUCTION["recorded"]["button"]["upload"] ?>
+                        <div class="loader_container">
+                            <div class="loader"></div>
+                        </div>
+                    </button>
+                </div>
+                <hr class="separator">
+                <div class="prerecorded_message_upload_error"></div>
             </div>
 
             <!-- la barre de progrès -->

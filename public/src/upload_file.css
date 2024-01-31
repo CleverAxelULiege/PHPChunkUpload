@@ -1,14 +1,26 @@
-#root>div.upload_file_container > h2{
+#root>div.upload_file_container>h2 {
     text-align: left;
 }
 
-.prerecorded_input_container{
+.upload_file_container .separator {
+    border: none;
+    margin: 10px 0;
+    border-top: 1px solid var(--dark_gray);
+}
+
+.upload_file_container .button_upload_container{
+    display: flex;
+    margin: 10px 0;
+    justify-content: center;
+}
+
+.prerecorded_input_container {
     margin: 20px 0 0 0;
     display: flex;
     justify-content: center;
 }
 
-.prerecorded_input_container label{
+.prerecorded_input_container label {
     position: relative;
     border-style: none;
     outline: none;
@@ -29,15 +41,87 @@
     overflow: hidden;
 }
 
+.upload_prerecorded_video_button {
+    position: relative;
+    border-style: none;
+    outline: none;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 10px;
+    background-color: steelblue;
+    color: white;
+    border-radius: 10px;
+    border: 2px solid steelblue;
+    transition: all 150ms ease-in-out;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.upload_prerecorded_video_button:disabled{
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+.upload_file_container .separator {
+    border: none;
+    margin: 10px 0;
+    border-top: 1px solid var(--dark_gray);
+}
+
+.upload_file_container .file_name{
+    margin: 0 0 30px 0;
+    font-family: var(--second_font);
+    text-align: center;
+    font-size: 21px;
+    font-weight: 300;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+}
+
+.upload_prerecorded_video_button > .loader_container{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.75);
+    cursor: not-allowed;
+}
+
+.upload_prerecorded_video_button > .loader_container .loader{
+    width: 34px;
+    height: 34px;
+    margin: 0 auto;
+    border: 5px solid white;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+.upload_prerecorded_video_button.waiting_for_response:disabled > .loader_container{
+    display: flex;
+}
+
 @media (hover: hover) {
 
-    .prerecorded_input_container label:hover, .prerecorded_input_container label:focus {
+    .prerecorded_input_container label:hover,
+    .prerecorded_input_container label:focus,
+    .upload_prerecorded_video_button:hover:not(:disabled),
+    .upload_prerecorded_video_button:focus:not(:disabled) {
         color: steelblue;
         background-color: white;
         fill: steelblue;
     }
 }
 
-.prerecorded_input_container input{
+.prerecorded_input_container input {
     display: none;
 }

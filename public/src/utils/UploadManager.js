@@ -2,6 +2,7 @@ const CHUNK_SIZE = 1000 * 1000;
 const UPLOAD_RECORD_LINK = "/upload_record.php?lng=" + document.documentElement.lang;
 const ASK_PERMISSION_TO_UPLOAD_LINK = "/ask_permission_upload_record.php?lng=" + document.documentElement.lang;
 const UPLOAD_OVER_LINK = "/upload_over.php?lng=" + document.documentElement.lang;
+const CONTINUE_UPLOAD_LINK = "/continue_upload.php?lng=" +  document.documentElement.lang;
 const ATTEMPTS_BEFORE_ABORTING = 5;
 
 const KEY_LOCALSTORAGE = "upload_in_progress";
@@ -20,6 +21,9 @@ export class UploadManager {
 
     /**@type {Blob|null} */
     file = null;
+
+    /**@type {number|null} */
+    videoDuration = null;
 
     start = 0;
     end = CHUNK_SIZE;
@@ -304,18 +308,34 @@ export class UploadManager {
         }
     }
 
+    async asyncContinueUpload(){
+        let unCompleteUpload = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE));
+
+        if(unCompleteUpload === null){
+            return;
+        }
+        
+        if(unCompleteUpload.fileName != this.file.name && unCompleteUpload.fileDuration != this.videoDuration && unCompleteUpload.fileSize != this.file.size){
+            return;
+        }
+
+        console.log("past");
+    }
+
     async asyncAskPermissionToUpload() {
         if (this.file === null) {
             window.alert("No file given to upload");
             return false;
         }
-        console.log("asking_");
-        let videoDuration = await this.asyncGetRecordDuration();
+
+        this.videoDuration = await this.asyncGetRecordDuration();
+        this.asyncContinueUpload();
+        return;
 
         let formData = new FormData();
         formData.append("payload", JSON.stringify({
             fileSize: this.file.size,
-            recordDuration: videoDuration,
+            recordDuration: this.videoDuration,
             fileName: this.file.name ?? Date.now().toString() + "_record.webm",
             CSRFtoken: this.CSRFToken,
         }));
@@ -333,7 +353,6 @@ export class UploadManager {
 
         try {
             this.waitingForResponse = true;
-            console.log("asking");
             let response = await fetch(ASK_PERMISSION_TO_UPLOAD_LINK, {
                 method: "POST",
                 body: formData
@@ -354,7 +373,7 @@ export class UploadManager {
                 this.container.classList.remove("hidden");
 
                 window.addEventListener("beforeunload", this.beforeUnloadHandler);
-                localStorage.setItem(KEY_LOCALSTORAGE, "true");
+                localStorage.setItem(KEY_LOCALSTORAGE, JSON.stringify({fileName : this.file.name ?? "UNKNOWN", fileDuration: this.videoDuration, fileSize: this.file.size}));
                 this.asyncUploadFile();
                 return true;
             }

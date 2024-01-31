@@ -6,6 +6,7 @@ import { UploadManager } from "./utils/UploadManager.js";
 import "./utils/typedefs.js"
 import { VideoPlayer } from "./utils/video_player/VideoPlayer.js";
 
+
 /**@type {MediaStreamConstraints} */
 let mediaStreamConstraint;
 
@@ -28,10 +29,46 @@ export const UPLOAD_MANAGER = new UploadManager(
     document.querySelector(".upload_progress_container .message_container")
 );
 
+/** @type {HTMLInputElement} */
+const INPUT_FILE_PRERECORDED_MSG = document.querySelector("#prerecorded_file");
+/**@type {HTMLButtonElement} */
+const BUTTON_UPLOAD_PRERECORDED_MSG = document.querySelector(".upload_prerecorded_video_button");
+
+window.addEventListener("DOMContentLoaded", () => {
+    INPUT_FILE_PRERECORDED_MSG.value = "";
+});
+
+INPUT_FILE_PRERECORDED_MSG.addEventListener("change", () => {
+    BUTTON_UPLOAD_PRERECORDED_MSG.disabled = false;
+    document.querySelector(".file_name").textContent = INPUT_FILE_PRERECORDED_MSG.files[0].name
+});
+
+BUTTON_UPLOAD_PRERECORDED_MSG.addEventListener("click", () => {
+    if(UPLOAD_MANAGER.isUploadComplete || UPLOAD_MANAGER.waitingForResponse ||INPUT_FILE_PRERECORDED_MSG.value == ""){
+        return;
+    }
+
+    UPLOAD_MANAGER.setFile(INPUT_FILE_PRERECORDED_MSG.files[0]);
+            UPLOAD_MANAGER.setUploadErrorMessages(document.querySelector(".prerecorded_message_upload_error"));
+
+            BUTTON_UPLOAD_PRERECORDED_MSG.disabled = true;
+            BUTTON_UPLOAD_PRERECORDED_MSG.classList.add("waiting_for_response");
+            UPLOAD_MANAGER.asyncAskPermissionToUpload().then((hasStarted) => {
+                if (hasStarted) {
+                    BUTTON_UPLOAD_PRERECORDED_MSG.parentElement.removeChild(BUTTON_UPLOAD_PRERECORDED_MSG);
+                    // this.element.UPLOAD_RECORDING_BUTTON.parentElement.removeChild(this.element.UPLOAD_RECORDING_BUTTON);
+                } else {
+                    BUTTON_UPLOAD_PRERECORDED_MSG.disabled = false;
+                    BUTTON_UPLOAD_PRERECORDED_MSG.classList.remove("waiting_for_response");
+                }
+            });
+});
+
 init();
 
 async function init() {
 
+    
 
     page.retrieveDOMElements();
     try {

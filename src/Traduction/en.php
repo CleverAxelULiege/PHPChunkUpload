@@ -72,5 +72,9 @@ return [
         "complete" => "Upload complete !",
         "error" => "An error occured while uploading",
         "noConnection" => "No internet connection"
+    ],
+    "uploadFile" => [
+        "main" => "Upload a prerecorded message",
+        "selectFile" => "Select a file to upload"
     ]
 ];

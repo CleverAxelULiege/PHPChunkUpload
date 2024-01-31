@@ -74,6 +74,7 @@ return [
         "noConnection" => "Aucune connection internet"
     ],
     "uploadFile" => [
-        "main" => "Mettre en ligne un message pré-enregistré"
+        "main" => "Mettre en ligne un message pré-enregistré",
+        "selectFile" => "Sélectionner un fichier à mettre en ligne"
     ]
 ];

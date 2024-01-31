@@ -483,7 +483,6 @@ export class Recorder {
                 return;
             } else {
                 this.resumeRecording();
-                this.pauseOrResumeRecording();
                 return;
             }
         }
