@@ -93,6 +93,8 @@ export class Page {
 
     removePossibilityToRecord() {
         this.element.ROOT_DIV.removeChild(this.element.RECORD_FROM_SITE_DIV);
+        this.element.ROOT_DIV.removeChild(document.querySelector(".recorder_container"));
+        this.element.ROOT_DIV.removeChild(document.querySelector(".recorded_element_container"));
     }
 
     displayPossibilityToRecord() {
@@ -175,6 +177,20 @@ export class Page {
      */
     buildPage() {
         document.getElementById("root").innerHTML = `
+        <div class="upload_progress_container">
+            <div class="upload_progress">
+                <div class="progress_bar">
+                    <span class="progress">10%</span>
+                    <div class="progress_done"></div>
+                </div>
+                <span class="in_progress hidden">${this.traduction.upload.inProgress}</span>
+                <span class="processing hidden">${this.traduction.upload.processing}</span>
+                <span class="complete hidden">${this.traduction.upload.complete}</span>
+                <span class="error hidden">${this.traduction.upload.error}</span>
+                <span class="no_connection hidden">${this.traduction.upload.noConnection}</span>
+            </div>
+        </div>
+
         <div class="recorder_container hidden">
             <div class="recorder animation_enter_recorder">
                 <div class="close_button_container">
@@ -285,7 +301,7 @@ export class Page {
                 </div>
             </div>
 
-            <div class="recorded_element_container">
+            <div class="recorded_element_container hidden">
                 <h2>${this.traduction.recorded.main} :</h2>
                 <div class="video_player">
                     <video id="recorded_video"></video>
