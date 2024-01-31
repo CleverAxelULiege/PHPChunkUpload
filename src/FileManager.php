@@ -51,7 +51,7 @@ class FileManager
     /**
      * Mettre à NULL pour ne pas en tenir compte
      */
-    const MIN_RECORDING_TIME_SECOND = 0;
+    const MIN_RECORDING_TIME_SECOND = 10;
 
     const ALLOWED_EXTENSIONS = ["mp4", "webm"];
 

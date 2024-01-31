@@ -1,3 +1,7 @@
+.upload_progress_container.hidden{
+    display: none;
+}
+
 .upload_progress_container{
     position: fixed;
     overflow-y: scroll;
@@ -37,11 +41,11 @@
     transform: translate(-50%, -50%);
     border-radius: 9999px;
 }
-.upload_progress_container .progress_bar .progress_done{
+.upload_progress_container .progress_bar .bar{
     height: 100%;
     left: 0;
     background-color: rgb(60, 89, 112); 
-    width: 50%;
+    width: 0%;
     border-radius: 9999px;
     transition: all 150ms ease-in-out;
 }
@@ -53,7 +57,7 @@
     background-color: white;
 }
 
-.upload_progress > span{
+.upload_progress span{
     display: block;
     text-align: center;
     font-size: 21px;
@@ -61,14 +65,24 @@
     font-weight: 500;
 }
 
-.upload_progress > .complete{
+.upload_progress .complete{
     color: green;
 }
 
-.upload_progress > .error, .upload_progress > .no_connection{
+.upload_progress .error, .upload_progress .no_connection{
     color: var(--red);
 }
 
-.upload_progress > span.hidden{
+.upload_progress span.hidden{
     display: none;
+}
+
+.recorded_message_upload_error{
+    color: var(--red);
+    padding: 5px;
+    font-size: 18px;
+}
+
+.recorded_message_upload_error ul{
+    padding-left: 20px;
 }

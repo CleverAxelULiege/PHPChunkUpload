@@ -1,6 +1,5 @@
-import { SUPPORT_FULLSCREEN } from "../main.js";
+import { SUPPORT_FULLSCREEN, UPLOAD_MANAGER } from "../main.js";
 import { AudioVisualizer } from "./AudioVisualizer.js";
-import { UploadManager } from "./UploadManager.js";
 import "./typedefs.js";
 import { VideoPlayer } from "./video_player/VideoPlayer.js";
 const VIDEO_MIME_TYPE = "video/webm";
@@ -17,7 +16,7 @@ const TIME_SLICE_MEDIA_RECORDER = 500;
  * Temps en millisecondes, la limite d'un temps d'enregistrement mettre à null pour temps ILLIMITÉ
  * Vu que je me sers de setTimeOut ainsi que de setInterval, le temps peut varier de quelques petites secondes plus l'enregistrement est long.
  */
-const STOP_RECORDING_TIMEOUT = 1000 * 60 * 5;
+const STOP_RECORDING_TIMEOUT = 1000 * 60 * 3;
 
 /**
  * @type {number|null}
@@ -114,9 +113,6 @@ export class Recorder {
     isPaused = false;
 
     /**@private */
-    waitingForUploadResponse = false;
-
-    /**@private */
     isFullscreen = false;
 
     /**@private */
@@ -164,6 +160,7 @@ export class Recorder {
         this.tradRecorded = tradRecorded;
         this.tradTime = tradTime;
         this.audioVisualizer = audioVisualizer;
+
         this.videoPlayer = videoPlayer;
 
         this.element = {
@@ -292,14 +289,14 @@ export class Recorder {
         this.element.NOTIFICATION_LIMIT_REACHED_BUTTON.addEventListener("click", this.closeNotificationTimeout.bind(this));
 
         this.element.UPLOAD_RECORDING_BUTTON.addEventListener("click", () => {
-            if (this.recordedBlob == null || this.waitingForUploadResponse) {
+            if (this.recordedBlob == null || UPLOAD_MANAGER.waitingForResponse || UPLOAD_MANAGER.isUploadComplete || this.videoPlayer.getDuration() === Infinity) {
                 return;
             }
 
             if (!window.confirm(this.tradRecorded.confirmUpload)) {
                 return;
             }
-            
+
             if (this.isRecording) {
                 this.stopRecording(true);
                 return;
@@ -309,20 +306,15 @@ export class Recorder {
                 return;
             }
 
-            let uploadManager = new UploadManager(document.querySelector(".recorded_progress_bar_upload"), document.querySelector(".recorded_message_upload"));
-            uploadManager.setFile(this.recordedBlob);
+            UPLOAD_MANAGER.setFile(this.recordedBlob);
+            UPLOAD_MANAGER.setUploadErrorMessages(document.querySelector(".recorded_message_upload_error"));
 
-            this.waitingForUploadResponse = true;
             this.element.OPEN_RECORDER_BUTTON.disabled = true;
             this.element.UPLOAD_RECORDING_BUTTON.disabled = true;
-            uploadManager.asyncAskPermissionToUpload().then((hasStarted) => {
+            UPLOAD_MANAGER.asyncAskPermissionToUpload().then((hasStarted) => {
                 if (hasStarted) {
-                    let root = document.querySelector("#root");
-                    root.removeChild(document.querySelector(".permission_to_record_from_site"));
-                    root.removeChild(document.querySelector(".recorder_container"));
                     this.element.UPLOAD_RECORDING_BUTTON.parentElement.removeChild(this.element.UPLOAD_RECORDING_BUTTON);
                 } else {
-                    this.waitingForUploadResponse = false;
                     this.element.OPEN_RECORDER_BUTTON.disabled = false;
                     this.element.UPLOAD_RECORDING_BUTTON.disabled = false;
                 }
@@ -419,8 +411,13 @@ export class Recorder {
             return;
         }
 
-        if (this.waitingForUploadResponse) {
+        if (UPLOAD_MANAGER.waitingForResponse) {
             window.alert("Waiting for the response from the server")
+            return;
+        }
+
+        if (UPLOAD_MANAGER.isUploadComplete) {
+            window.alert("Upload complete.");
             return;
         }
 
@@ -478,7 +475,7 @@ export class Recorder {
      */
     async closeRecorder() {
         if (this.isRecording) {
-                this.pauseRecording();
+            this.pauseRecording();
 
             if (window.confirm(this.tradRecorder.leaveWhileRecording)) {
                 this.resumeRecording();
@@ -577,8 +574,13 @@ export class Recorder {
             return;
         }
 
-        if (this.waitingForUploadResponse) {
+        if (UPLOAD_MANAGER.waitingForResponse) {
             window.alert("Waiting for response");
+            return;
+        }
+
+        if (UPLOAD_MANAGER.isUploadComplete) {
+            window.alert("Upload complete.");
             return;
         }
 
@@ -743,7 +745,7 @@ export class Recorder {
         clearInterval(this.idInterval);
         clearTimeout(this.idRecordingTimeout);
         await this.animateButtonsOut();
-        
+
         if (this.isPaused) {
             this.element.PAUSE_RESUME_BUTTON.querySelector(".pause_icon")?.classList.remove("hidden");
             this.element.PAUSE_RESUME_BUTTON.querySelector(".resume_icon")?.classList.add("hidden");

@@ -12,8 +12,9 @@ import { VolumeSlider } from "./VolumeSlider.js";
  */
 const TIME_CONTROLS_ARE_UP = 3500;
 
-export class VideoPlayer {
 
+
+export class VideoPlayer {
     isVideoOver = false;
 
     /**@private */
@@ -96,7 +97,7 @@ export class VideoPlayer {
 
     /**@private */
     initEventListeners() {
-        this.video.addEventListener("timeupdate", this.timeUpdate.bind(this));
+        // this.video.addEventListener("timeupdate", this.timeUpdate.bind(this));
         this.playPauseButton.addEventListener("click", this.playOrPause.bind(this));
         this.video.addEventListener("ended", this.endVideo.bind(this));
         this.requestFullScreenButton.addEventListener("click", this.toggleFullScreen.bind(this));
@@ -118,13 +119,29 @@ export class VideoPlayer {
         this.videoContainer.addEventListener("click", this.toggleControlsTouchScreen.bind(this));
         this.videoContainer.addEventListener("click", this.playOrPauseViaScreen.bind(this));
 
-        this.video.addEventListener("loadedmetadata", () => {
-            this.updateDisplayTimeStamp();
-            this.progressionSlider.setThumbPosition(0);
-            this.video.currentTime = 0;
-            this.playPauseButton.querySelector(".play_icon").classList.remove("hidden");
-            this.playPauseButton.querySelector(".pause_icon").classList.add("hidden");
-            this.playPauseButton.querySelector(".replay_icon").classList.add("hidden");
+        this.video.addEventListener("loadedmetadata", async () => {
+            
+            if (this.video.duration === Infinity) {
+                // fix INFINITY dû au format webm et de media recorder
+                this.video.currentTime = 1e101;
+                this.video.addEventListener("timeupdate", () => {
+                  this.updateDisplayTimeStamp();
+                  this.progressionSlider.setThumbPosition(0);
+                  this.video.currentTime = 0;
+                  this.playPauseButton.querySelector(".play_icon").classList.remove("hidden");
+                  this.playPauseButton.querySelector(".pause_icon").classList.add("hidden");
+                  this.playPauseButton.querySelector(".replay_icon").classList.add("hidden");
+                  this.video.addEventListener("timeupdate", this.timeUpdate.bind(this))
+                }, { once: true });
+            } else {
+                this.updateDisplayTimeStamp();
+                this.progressionSlider.setThumbPosition(0);
+                this.video.currentTime = 0;
+                this.playPauseButton.querySelector(".play_icon").classList.remove("hidden");
+                this.playPauseButton.querySelector(".pause_icon").classList.add("hidden");
+                this.playPauseButton.querySelector(".replay_icon").classList.add("hidden");
+                this.video.addEventListener("timeupdate", this.timeUpdate.bind(this))
+            }
         });
 
         this.JSsupportAspectRatio();
@@ -135,7 +152,7 @@ export class VideoPlayer {
     }
 
     /**@private */
-    async asyncUpdateDisplayTimeStamp(){
+    async asyncUpdateDisplayTimeStamp() {
         while (this.timestamp.innerHTML == "") {
             this.updateDisplayTimeStamp();
         }
@@ -217,8 +234,8 @@ export class VideoPlayer {
             }, { once: true });
         }
         this.playOrPause();
-
     }
+
 
     /**
      * @private
@@ -247,10 +264,10 @@ export class VideoPlayer {
         if (this.progressionSlider.getProgression() >= 100) {
             this.isVideoOver = true;
 
-            if(this.isTouchScreen()){
+            if (this.isTouchScreen()) {
                 this.openControlsTouchScreen();
             }
-            
+
             this.playPauseButton.querySelector(".play_icon").classList.add("hidden");
             this.playPauseButton.querySelector(".pause_icon").classList.add("hidden");
             this.playPauseButton.querySelector(".replay_icon").classList.remove("hidden");
@@ -445,10 +462,6 @@ export class VideoPlayer {
     }
 
     getDuration() {
-        if (this.video.duration == Infinity) {
-            window.alert("The video duration is set to INFINITY, this isn't normal, please contact the responsible person.");
-            throw new Error("Video duration set to infinity");
-        }
         return this.video.duration;
     }
 
@@ -523,25 +536,25 @@ export class VideoPlayer {
         controls.classList.add("controls");
         controls.innerHTML +=
             `
-            <div class="progress_bar" role="slider" aria-valuemin="0%" aria-valuemax="100%"></div>
+            <div class="progress_bar" role="slider" aria-valuemin="0%" aria-valuemax="100%" draggable="false"></div>
 
-            <div class="buttons_container">
-                <button class="play_button">
+            <div class="buttons_container" draggable="false">
+                <button class="play_button" draggable="false">
                     <svg width="18" class="play_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>
                     <svg width="18" class="pause_icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/></svg>
                     <svg width="28" class="replay_icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M125.7 160H176c17.7 0 32 14.3 32 32s-14.3 32-32 32H48c-17.7 0-32-14.3-32-32V64c0-17.7 14.3-32 32-32s32 14.3 32 32v51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z"/></svg>
                 </button>
 
-                <button class="volume_button">
+                <button class="volume_button" draggable="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" class="high" viewBox="0 0 640 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M533.6 32.5C598.5 85.2 640 165.8 640 256s-41.5 170.7-106.4 223.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C557.5 398.2 592 331.2 592 256s-34.5-142.2-88.7-186.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3z"/></svg>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" class="low hidden" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM412.6 181.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5z"/></svg>
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" class="none hidden" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M320 64c0-12.6-7.4-24-18.9-29.2s-25-3.1-34.4 5.3L131.8 160H64c-35.3 0-64 28.7-64 64v64c0 35.3 28.7 64 64 64h67.8L266.7 471.9c9.4 8.4 22.9 10.4 34.4 5.3S320 460.6 320 448V64z"/></svg>
                 </button>
-                <div class="volume_container">
+                <div class="volume_container" draggable="false">
                     <div class="progress_volume" aria-valuemin="0%" aria-valuemax="100%" role="slider"></div>
                 </div>
-                <span class="timestamp"></span>
-                <button class="full_screen_button">
+                <span class="timestamp" draggable="false"></span>
+                <button class="full_screen_button" draggable="false">
                     <svg width="22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z"/></svg>
                 </button>
             </div>

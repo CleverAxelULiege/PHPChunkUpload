@@ -4,22 +4,34 @@ namespace Upload\Traduction;
 
 class Traduction
 {
-    const DEFAULT = "en";
+    const DEFAULT = "fr";
 
-    public static function retrieve(){
+    public static function retrieve()
+    {
         $lng = $_GET["lng"] ?? Traduction::DEFAULT;
 
-        if(self::exists($lng)){
+        if (self::existsInFile($lng)) {
             return require(__DIR__ . "/" . $lng . ".php");
         } else {
             return require(__DIR__ . "/" . Traduction::DEFAULT . ".php");
         }
     }
 
-    private static function exists(string $lng)
+    public static function getLng()
+    {
+        $lng = $_GET["lng"] ?? Traduction::DEFAULT;
+
+        if (self::existsInFile($lng)) {
+            return $lng;
+        } else {
+            return Traduction::DEFAULT;
+        }
+    }
+
+    private static function existsInFile(string $lng)
     {
         $traductions = array_filter(
-            scandir(__DIR__), 
+            scandir(__DIR__),
             fn ($file) => is_file(__DIR__ . "/" . $file) && $file !== "Traduction.php"
         );
 

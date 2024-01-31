@@ -5,6 +5,7 @@ export const DEVICE_STATUS = {
     unavailableAudioDeviceVideoDevice: 1,
     unavailablePermissionForDevices: 2,
     unavailablePermissionToUseAudioDeviceWithVideoDevice: 3,
+    unavailableMediaRecorderMediaStream: 4,
 }
 
 export class Device {

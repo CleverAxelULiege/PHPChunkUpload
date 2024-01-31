@@ -1,0 +1,43 @@
+#root>div.upload_file_container > h2{
+    text-align: left;
+}
+
+.prerecorded_input_container{
+    margin: 20px 0 0 0;
+    display: flex;
+    justify-content: center;
+}
+
+.prerecorded_input_container label{
+    position: relative;
+    border-style: none;
+    outline: none;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 10px;
+    background-color: steelblue;
+    color: white;
+    fill: white;
+    border-radius: 10px;
+    border: 2px solid steelblue;
+    transition: all 150ms ease-in-out;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    overflow: hidden;
+}
+
+@media (hover: hover) {
+
+    .prerecorded_input_container label:hover, .prerecorded_input_container label:focus {
+        color: steelblue;
+        background-color: white;
+        fill: steelblue;
+    }
+}
+
+.prerecorded_input_container input{
+    display: none;
+}

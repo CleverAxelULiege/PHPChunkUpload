@@ -1,6 +1,3 @@
-#root>div.recorded_element_container {
-    margin: 10px auto 10px auto;
-}
 
 #root>div.recorded_element_container h2 {
     text-align: left;
@@ -69,71 +66,6 @@
     border: none;
     margin: 10px 0;
     border-top: 1px solid var(--dark_gray);
-}
-
-.recorded_progress_bar_upload {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    height: 30px;
-    border-radius: 9999px;
-    background: repeating-linear-gradient(-45deg,
-            var(--dark_gray),
-            var(--dark_gray) 10px,
-            var(--gray) 10px,
-            var(--gray) 20px);
-}
-
-.recorded_progress_bar_upload .progress{
-    position: absolute;
-    background-color: white;
-    padding: 0px 5px;
-    color: black;
-    font-size: 18px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 9999px;
-}
-
-.recorded_progress_bar_upload .bar{
-    height: 100%;
-    left: 0;
-    background-color: rgb(60, 89, 112); 
-    width: 0%;
-    border-radius: 9999px;
-    transition: all 150ms ease-in-out;
-}
-
-.recorded_message_upload{
-    font-size: 18px;
-}
-
-.recorded_message_upload > span{
-    display: block;
-    width: 100%;
-    text-align: center;
-}
-
-.recorded_message_upload > span.hidden{
-    display: none;
-}
-
-.recorded_message_upload > .complete{
-    color: rgb(13, 87, 13);
-    font-weight: bold;
-}
-
-.recorded_message_upload > .error, .recorded_message_upload > .connection{
-    color: var(--red);
-}
-
-.recorded_message_upload .error, .recorded_message_upload .error_messages{
-    color: var(--red);
-}
-
-.recorded_message_upload .error_messages ul {
-    padding-left: 20px;
 }
 
 @media (hover: hover) {

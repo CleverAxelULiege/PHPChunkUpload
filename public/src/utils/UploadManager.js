@@ -4,6 +4,8 @@ const ASK_PERMISSION_TO_UPLOAD_LINK = "/ask_permission_upload_record.php?lng=" +
 const UPLOAD_OVER_LINK = "/upload_over.php?lng=" + document.documentElement.lang;
 const ATTEMPTS_BEFORE_ABORTING = 5;
 
+const KEY_LOCALSTORAGE = "upload_in_progress";
+
 const STATUS = {
     NO_FILE_SENT: 0,
     FILE_TOO_BIG: 1,
@@ -25,6 +27,10 @@ export class UploadManager {
     CSRFToken = "";
 
     isOnline = true;
+
+    waitingForResponse = false;
+
+    isUploadComplete = false;
 
     /**@type {HTMLSpanElement|null} */
     displayProgressInPercent = null;
@@ -52,10 +58,14 @@ export class UploadManager {
 
     /**
      * 
+     * @param {HTMLDivElement|undefined} container 
      * @param {HTMLDivElement|undefined} progressBar 
      * @param {HTMLDivElement|undefined} messageContainer 
      */
-    constructor(progressBar, messageContainer) {
+    constructor(container, progressBar, messageContainer) {
+
+        /**@type {HTMLDivElement} */
+        this.container = container;
 
         /**@type {HTMLDivElement} */
         this.progressBar = progressBar
@@ -63,19 +73,14 @@ export class UploadManager {
         /**@type {HTMLDivElement} */
         this.messageContainer = messageContainer;
 
-        if (progressBar) {
-            this.displayProgressInPercent = progressBar.querySelector(".progress");
-            this.displayProgressBar = progressBar.querySelector(".bar");
-        }
+        this.displayProgressInPercent = progressBar.querySelector(".progress");
+        this.displayProgressBar = progressBar.querySelector(".bar");
 
-        if (messageContainer) {
-            this.displayUploadComplete = messageContainer.querySelector(".complete");
-            this.displayUploadInProgress = messageContainer.querySelector(".in_progress");
-            this.displayUploadError = messageContainer.querySelector(".error");
-            this.displayUploadErrorMessages = messageContainer.querySelector(".error_messages");
-            this.displayConnectionLost = messageContainer.querySelector(".connection");
-            this.displayVideoProcessing = messageContainer.querySelector(".processing");
-        }
+        this.displayUploadComplete = messageContainer.querySelector(".complete");
+        this.displayUploadInProgress = messageContainer.querySelector(".in_progress");
+        this.displayUploadError = messageContainer.querySelector(".error");
+        this.displayConnectionLost = messageContainer.querySelector(".no_connection");
+        this.displayVideoProcessing = messageContainer.querySelector(".processing");
 
         window.addEventListener("online", () => {
             this.isOnline = true;
@@ -98,17 +103,29 @@ export class UploadManager {
         this.file = file;
     }
 
+    /**
+     * @param {HTMLDivElement} messageContainer 
+     */
+    setUploadErrorMessages(messageContainer) {
+        this.displayUploadErrorMessages = messageContainer;
+    }
+
     asyncGetRecordDuration() {
         return new Promise((resolve) => {
             let video = document.createElement("video");
             video.src = URL.createObjectURL(this.file);
-            video.onloadedmetadata = () => {
-                URL.revokeObjectURL(video.src);
-                video.onloadedmetadata = null;
-                resolve(video.duration);
-            };
-
-        })
+            video.addEventListener("loadedmetadata", () => {
+                if (video.duration === Infinity) {
+                    video.currentTime = 1e101;
+                    video.addEventListener("timeupdate", () => {
+                        video.currentTime = 0;
+                        resolve(video.duration);
+                    }, { once: true });
+                } else {
+                    resolve(video.duration);
+                }
+            }, { once: true });
+        });
     }
 
     async asyncUploadFile() {
@@ -139,6 +156,9 @@ export class UploadManager {
 
                     this.displayProgressInPercent.innerHTML = `${progress}%`;
                     this.displayProgressBar.style.width = `${progress}%`;
+
+                    this.progressBar.setAttribute("aria-valuenow", `${progress}%`);
+
                 } else {
                     attempt++;
                 }
@@ -150,20 +170,20 @@ export class UploadManager {
         if (statusUpload == STATUS.OK) {
             this.uploadComplete();
         }
-        else if (statusUpload == STATUS.FAILED_TO_MOVE_FILE) {
-            this.messageContainer.classList.remove("hidden");
-            this.displayUploadComplete.classList.add("hidden");
-            this.displayUploadError.classList.remove("hidden");
-            this.displayUploadInProgress.classList.add("hidden");
-            this.displayConnectionLost.classList.add("hidden");
-            this.displayVideoProcessing.classList.add("hidden");
-        }
         else if (!this.isOnline) {
             this.messageContainer.classList.remove("hidden");
             this.displayUploadComplete.classList.add("hidden");
             this.displayUploadError.classList.add("hidden");
             this.displayUploadInProgress.classList.add("hidden");
             this.displayConnectionLost.classList.remove("hidden");
+            this.displayVideoProcessing.classList.add("hidden");
+        }
+        else if (statusUpload == STATUS.FAILED_TO_MOVE_FILE) {
+            this.messageContainer.classList.remove("hidden");
+            this.displayUploadComplete.classList.add("hidden");
+            this.displayUploadError.classList.remove("hidden");
+            this.displayUploadInProgress.classList.add("hidden");
+            this.displayConnectionLost.classList.add("hidden");
             this.displayVideoProcessing.classList.add("hidden");
         }
 
@@ -209,6 +229,7 @@ export class UploadManager {
             this.displayUploadInProgress.classList.add("hidden");
             this.displayConnectionLost.classList.add("hidden");
             this.displayVideoProcessing.classList.add("hidden");
+            this.isUploadComplete = true;
         } catch {
             this.messageContainer.classList.remove("hidden");
             this.displayUploadComplete.classList.add("hidden");
@@ -223,6 +244,7 @@ export class UploadManager {
                 this.displayUploadError.classList.remove("hidden");
             }
         }
+        this.waitingForResponse = false;
         window.removeEventListener("beforeunload", this.beforeUnloadHandler);
     }
 
@@ -280,8 +302,6 @@ export class UploadManager {
             window.removeEventListener("beforeunload", this.beforeUnloadHandler);
             return null;
         }
-
-
     }
 
     async asyncAskPermissionToUpload() {
@@ -312,6 +332,7 @@ export class UploadManager {
         this.displayVideoProcessing.classList.add("hidden");
 
         try {
+            this.waitingForResponse = true;
             console.log("asking");
             let response = await fetch(ASK_PERMISSION_TO_UPLOAD_LINK, {
                 method: "POST",
@@ -330,7 +351,10 @@ export class UploadManager {
                 this.CSRFToken = json.CSRFToken;
                 this.progressBar.classList.remove("hidden");
                 this.displayUploadInProgress.classList.remove("hidden");
+                this.container.classList.remove("hidden");
+
                 window.addEventListener("beforeunload", this.beforeUnloadHandler);
+                localStorage.setItem(KEY_LOCALSTORAGE, "true");
                 this.asyncUploadFile();
                 return true;
             }
@@ -344,6 +368,7 @@ export class UploadManager {
             } else {
                 this.displayUploadError.classList.remove("hidden");
             }
+            this.waitingForResponse = false;
             return false;
         }
     }
