@@ -291,8 +291,8 @@ class FileManager
             $this->statusUploadedFile = FileManager::STATUS_FAILED_TO_MOVE_FILE;
             return false;
         }
-
-        if ($this->uploadState->currentChunkFile === 0) {
+        
+        if ($this->uploadState->currentChunkFile == 0) {
             $this->uploadState->hashedFile = hash_file("sha256", $pathToNewFile);
         }
 

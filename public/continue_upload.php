@@ -35,5 +35,7 @@ if($fileManager->hashedFileCorrespond()){
     HeaderManager::setBadRequestStatus();
     echo json_encode([
         "msg" => "Hash file doesn't correspond. Restart to upload from the beginning.",
+        "test" => hash_file("sha256", $_FILES[FileManager::FILE_FIELD_NAME]["tmp_name"]),
+        "test2" => $fileManager->getUploadState()->hashedFile
     ]);
 }

@@ -14,7 +14,8 @@ class Mapper{
             $payload->currentChunkFile,
             $payload->currentFileSize,
             $payload->extension,
-            $payload->CSRFToken
+            $payload->CSRFToken,
+            $payload->hashedFile
         );
     }
 

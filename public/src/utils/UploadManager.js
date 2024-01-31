@@ -197,7 +197,7 @@ export class UploadManager {
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve();
-            }, 1000);
+            }, 2000);
         })
     }
 
@@ -312,14 +312,47 @@ export class UploadManager {
         let unCompleteUpload = JSON.parse(localStorage.getItem(KEY_LOCALSTORAGE));
 
         if(unCompleteUpload === null){
-            return;
+            return false;
         }
         
         if(unCompleteUpload.fileName != this.file.name && unCompleteUpload.fileDuration != this.videoDuration && unCompleteUpload.fileSize != this.file.size){
-            return;
+            return false;
         }
 
-        console.log("past");
+        let formData = new FormData();
+        formData.append("payload",JSON.stringify({empty: true}));
+        formData.append("file", this.file.slice(this.start, this.end));
+
+        try {
+            let response = await fetch(CONTINUE_UPLOAD_LINK, {
+                method: "POST",
+                body: formData
+            });
+
+            // if (response.status != 200 && response.status != 400) {
+            //     throw new Error();
+            // }
+
+            let json = await response.json();
+            console.log(json);
+            this.CSRFToken = json.CSRFToken ?? "";
+            return true;
+        } catch {
+            this.messageContainer.classList.remove("hidden");
+            this.displayUploadComplete.classList.add("hidden");
+            this.displayUploadError.classList.add("hidden");
+            this.displayUploadInProgress.classList.add("hidden");
+            this.displayConnectionLost.classList.add("hidden");
+            this.displayVideoProcessing.classList.add("hidden");
+
+            if (!this.isOnline) {
+                this.displayConnectionLost.classList.remove("hidden");
+            } else {
+                this.displayUploadError.classList.remove("hidden");
+            }
+            window.removeEventListener("beforeunload", this.beforeUnloadHandler);
+            return false;
+        }
     }
 
     async asyncAskPermissionToUpload() {
