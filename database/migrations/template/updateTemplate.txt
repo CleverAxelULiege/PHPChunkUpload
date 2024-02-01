@@ -1,0 +1,25 @@
+<?php
+
+namespace Migrations;
+
+use Migrations\Utilities\Schema;
+use Migrations\Utilities\Migration;
+use Migrations\Utilities\TableUpdateInterface;
+
+class :PLACE_HOLDER_CLASS extends Migration
+{
+
+    public function up(Schema $schema)
+    {
+        $schema->updateTable(":PLACE_HOLDER_TABLE", function (TableUpdateInterface $table) {
+            
+        });
+
+        
+    }
+
+    public function down(Schema $schema)
+    {
+        
+    }
+}

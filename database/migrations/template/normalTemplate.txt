@@ -1,0 +1,20 @@
+<?php
+
+namespace Migrations;
+
+use Migrations\Utilities\Schema;
+use Migrations\Utilities\Migration;
+
+class :PLACE_HOLDER_CLASS extends Migration
+{
+
+    public function up(Schema $schema)
+    {
+        
+    }
+
+    public function down(Schema $schema)
+    {
+        
+    }
+}

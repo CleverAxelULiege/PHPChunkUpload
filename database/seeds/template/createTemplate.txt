@@ -1,0 +1,16 @@
+<?php
+
+namespace Seeds;
+
+use Seeds\Utilities\AbstractSeed;
+use Seeds\Utilities\SeedInterface;
+
+class :PLACE_HOLDER_CLASS extends AbstractSeed
+{
+    public function seed(SeedInterface $seed)
+    {
+        $seed->table(":PLACE_HOLDER_TABLE")->with([
+            :PLACE_HOLDER_COLUMNS
+        ]);
+    }
+}

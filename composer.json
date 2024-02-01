@@ -1,6 +1,9 @@
 {
     "autoload": {
         "psr-4": {
+            "Migrations\\": "database/migrations/",
+            "Seeds\\": "database/seeds/",
+            "Database\\" : "database/",
             "Upload\\": "src/"
         },
         "files": [
