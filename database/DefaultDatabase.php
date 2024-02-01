@@ -5,9 +5,9 @@ namespace Database;
 use Database\Parent\PostgresDatabase;
 
 
-class ExamDatabase extends PostgresDatabase
+class DefaultDatabase extends PostgresDatabase
 {
-    private string $dbName = "exam";
+    private string $dbName = "default";
     public function __construct()
     {
         parent::__construct(
