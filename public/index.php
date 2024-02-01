@@ -50,7 +50,7 @@ define("TRADUCTION", Traduction::retrieve());
                 <div class="prerecorded_message_upload_error"></div>
             </div>
 
-            <!-- la barre de progrès -->
+            <!-- la barre de progrès de l'upload -->
             <div class="upload_progress_container hidden">
                 <div class="upload_progress">
                     <div class="progress_bar" role="progressbar" aria-valuemin="0%" aria-valuemax="100%" aria-valuenow="0%">
@@ -63,6 +63,10 @@ define("TRADUCTION", Traduction::retrieve());
                         <span class="complete hidden"><?= TRADUCTION["upload"]["complete"] ?></span>
                         <span class="error hidden"><?= TRADUCTION["upload"]["error"] ?></span>
                         <span class="no_connection hidden"><?= TRADUCTION["upload"]["noConnection"] ?></span>
+                    </div>
+
+                    <div class="close_progress_bar_container hidden">
+                        <button class="close_progress_bar_button">OK</button>
                     </div>
                 </div>
             </div>

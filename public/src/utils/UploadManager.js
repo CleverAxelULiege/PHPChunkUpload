@@ -32,6 +32,8 @@ export class UploadManager {
 
     isOnline = true;
 
+    defaultFileName = Date.now().toString() + "_record.webm";
+
     waitingForResponse = false;
 
     isUploadComplete = false;
@@ -60,6 +62,9 @@ export class UploadManager {
     /**@type {HTMLDivElement|null} */
     displayUploadErrorMessages = null;
 
+    /**@type {HTMLButtonElement} */
+    closeProgressButton = null;
+
     /**
      * 
      * @param {HTMLDivElement|undefined} container 
@@ -86,6 +91,12 @@ export class UploadManager {
         this.displayConnectionLost = messageContainer.querySelector(".no_connection");
         this.displayVideoProcessing = messageContainer.querySelector(".processing");
 
+        this.closeProgressButton = container.querySelector(".close_progress_bar_container");
+
+        this.closeProgressButton.addEventListener("click", () => {
+            container.classList.add("hidden");
+        });
+
         window.addEventListener("online", () => {
             this.isOnline = true;
         });
@@ -105,6 +116,11 @@ export class UploadManager {
      */
     setFile(file) {
         this.file = file;
+    }
+
+    /** @param {string} fileName  */
+    setDefaultFileName(fileName){
+        this.defaultFileName = fileName;
     }
 
     /**
@@ -175,6 +191,7 @@ export class UploadManager {
             this.uploadComplete();
         }
         else if (!this.isOnline) {
+            this.closeProgressButton.classList.remove("hidden");
             this.messageContainer.classList.remove("hidden");
             this.displayUploadComplete.classList.add("hidden");
             this.displayUploadError.classList.add("hidden");
@@ -183,6 +200,7 @@ export class UploadManager {
             this.displayVideoProcessing.classList.add("hidden");
         }
         else if (statusUpload == STATUS.FAILED_TO_MOVE_FILE) {
+            this.closeProgressButton.classList.remove("hidden");
             this.messageContainer.classList.remove("hidden");
             this.displayUploadComplete.classList.add("hidden");
             this.displayUploadError.classList.remove("hidden");
@@ -226,7 +244,7 @@ export class UploadManager {
                 throw new Error();
             }
 
-
+            this.closeProgressButton.classList.remove("hidden");
             this.messageContainer.classList.remove("hidden");
             this.displayUploadComplete.classList.remove("hidden");
             this.displayUploadError.classList.add("hidden");
@@ -235,6 +253,7 @@ export class UploadManager {
             this.displayVideoProcessing.classList.add("hidden");
             this.isUploadComplete = true;
         } catch {
+            this.closeProgressButton.classList.remove("hidden");
             this.messageContainer.classList.remove("hidden");
             this.displayUploadComplete.classList.add("hidden");
             this.displayUploadError.classList.add("hidden");
@@ -291,6 +310,7 @@ export class UploadManager {
 
             return json.status;
         } catch {
+            this.closeProgressButton.classList.remove("hidden");
             this.messageContainer.classList.remove("hidden");
             this.displayUploadComplete.classList.add("hidden");
             this.displayUploadError.classList.add("hidden");
@@ -329,15 +349,23 @@ export class UploadManager {
                 body: formData
             });
 
-            // if (response.status != 200 && response.status != 400) {
-            //     throw new Error();
-            // }
+            if (response.status != 200 && response.status != 400) {
+                throw new Error();
+            }
+
+            if(response.status == 400){
+                return false;
+            }
 
             let json = await response.json();
             console.log(json);
+            this.start = json.nextChunk;
+            this.end = this.start + CHUNK_SIZE;
+
             this.CSRFToken = json.CSRFToken ?? "";
             return true;
         } catch {
+            this.closeProgressButton.classList.remove("hidden");
             this.messageContainer.classList.remove("hidden");
             this.displayUploadComplete.classList.add("hidden");
             this.displayUploadError.classList.add("hidden");
@@ -362,14 +390,24 @@ export class UploadManager {
         }
 
         this.videoDuration = await this.asyncGetRecordDuration();
-        this.asyncContinueUpload();
-        return;
+        let canContinueUpload = await this.asyncContinueUpload();
+        
+        if(canContinueUpload){
+            this.progressBar.classList.remove("hidden");
+            this.displayUploadInProgress.classList.remove("hidden");
+            this.container.classList.remove("hidden");
+
+            window.addEventListener("beforeunload", this.beforeUnloadHandler);
+            localStorage.setItem(KEY_LOCALSTORAGE, JSON.stringify({fileName : this.file.name ?? this.defaultFileName, fileDuration: this.videoDuration, fileSize: this.file.size}));
+            this.asyncUploadFile();
+            return true;
+        }
 
         let formData = new FormData();
         formData.append("payload", JSON.stringify({
             fileSize: this.file.size,
             recordDuration: this.videoDuration,
-            fileName: this.file.name ?? Date.now().toString() + "_record.webm",
+            fileName: this.file.name ?? this.defaultFileName,
             CSRFtoken: this.CSRFToken,
         }));
         let responseStatus = 200;
@@ -406,7 +444,7 @@ export class UploadManager {
                 this.container.classList.remove("hidden");
 
                 window.addEventListener("beforeunload", this.beforeUnloadHandler);
-                localStorage.setItem(KEY_LOCALSTORAGE, JSON.stringify({fileName : this.file.name ?? "UNKNOWN", fileDuration: this.videoDuration, fileSize: this.file.size}));
+                localStorage.setItem(KEY_LOCALSTORAGE, JSON.stringify({fileName : this.file.name ?? this.defaultFileName, fileDuration: this.videoDuration, fileSize: this.file.size}));
                 this.asyncUploadFile();
                 return true;
             }

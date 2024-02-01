@@ -86,3 +86,39 @@
 .recorded_message_upload_error ul, .prerecorded_message_upload_error ul{
     padding-left: 20px;
 }
+
+.close_progress_bar_container.hidden{
+    display: none;
+}
+
+.close_progress_bar_container{
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+}
+.close_progress_bar_container .close_progress_bar_button{
+    position: relative;
+    border-style: none;
+    outline: none;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 10px;
+    background-color: steelblue;
+    color: white;
+    border-radius: 10px;
+    border: 2px solid steelblue;
+    transition: all 150ms ease-in-out;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+@media (hover: hover) {
+    .close_progress_bar_button:hover {
+        color: steelblue;
+        background-color: white;
+        fill: steelblue;
+    }
+}

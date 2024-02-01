@@ -17,7 +17,6 @@ $payload = $_POST["payload"] ?? null;
 $requestUpload = Mapper::toRequestUpload(Mapper::jsonDecode($payload));
 $fileManager = new FileManager(Traduction::retrieve(), $requestUpload);
 
-
 if (!$fileManager->validateCSRFToken($requestUpload)) {
     HeaderManager::setUnauthorizedStatus();
 

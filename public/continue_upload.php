@@ -27,15 +27,13 @@ if (!$fileManager->isTempFolderActive()) {
 
 if($fileManager->hashedFileCorrespond()){
     echo json_encode([
-        "msg" => "Hash file corresponds. Continue the upload.",
+        "msg" => "File corresponds. Continue the upload.",
         "nextChunk" => $fileManager->getNextChunk(),
         "CSRFToken" => $fileManager->refreshCSRFToken(),
     ]);
 } else {
     HeaderManager::setBadRequestStatus();
     echo json_encode([
-        "msg" => "Hash file doesn't correspond. Restart to upload from the beginning.",
-        "test" => hash_file("sha256", $_FILES[FileManager::FILE_FIELD_NAME]["tmp_name"]),
-        "test2" => $fileManager->getUploadState()->hashedFile
+        "msg" => "File doesn't correspond. Restart to upload from the beginning.",
     ]);
 }
