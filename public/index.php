@@ -22,8 +22,8 @@ define("TRADUCTION", Traduction::retrieve());
     <title>Js recorder</title>
 </head>
 
-<body>
-    <main>
+<body >
+    <main style="display: none;">
         <div id="root">
 
             <div class="upload_file_container">
@@ -202,7 +202,7 @@ define("TRADUCTION", Traduction::retrieve());
                 </div>
             </div>
 
-            <div class="recorded_element_container ">
+            <div class="recorded_element_container hidden">
                 <h2><?= TRADUCTION["recorded"]["main"] ?> :</h2>
 
                 <div class="video_player">
