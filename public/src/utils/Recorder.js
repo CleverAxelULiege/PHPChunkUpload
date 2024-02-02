@@ -731,7 +731,10 @@ export class Recorder {
             this.element.RECORDED_ELEMENT.src = URL.createObjectURL(this.recordedBlob);
 
             this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.href = this.element.RECORDED_ELEMENT.src;
-            this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.download = `${Date.now()}_my_recorded_message.webm`;
+
+            let fileName = `${Date.now()}_my_recorded_message${this.getExtensionFromMimeType()}`
+            UPLOAD_MANAGER.setDefaultFileName(fileName);
+            this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.download = fileName;
 
             setTimeout(() => {
                 if (this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked) {
@@ -742,6 +745,19 @@ export class Recorder {
             //affiche ce qui a été record si ce n'est pas déjà affiché
             this.element.RECORDED_ELEMENT_CONTAINER_DIV.classList.remove("hidden");
         }
+    }
+
+    /**@private */
+    getExtensionFromMimeType(){
+        if(this.mimeType.startsWith("video/webm")){
+            return ".webm"
+        }
+        
+        if(this.mimeType.startsWith("video/mp4")){
+            return ".mp4"
+        }
+
+        throw new Error("Unknown mime type");
     }
 
     /**
