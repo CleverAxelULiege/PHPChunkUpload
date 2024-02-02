@@ -106,6 +106,8 @@ export class VideoPlayer {
         /**Simple function pour set les ARIA */
         this.videoContainer.addEventListener("mouseenter", () => {
             this.controls.setAttribute("aria-hidden", "false");
+            this.controls.classList.add("active");
+            this.areControlsUp = true;
         });
 
         /**Simple function pour set les ARIA */
@@ -120,18 +122,17 @@ export class VideoPlayer {
         this.videoContainer.addEventListener("click", this.playOrPauseViaScreen.bind(this));
 
         this.video.addEventListener("loadedmetadata", async () => {
-            
             if (this.video.duration === Infinity) {
                 // fix INFINITY dû au format webm et de media recorder
                 this.video.currentTime = 1e101;
                 this.video.addEventListener("timeupdate", () => {
-                  this.updateDisplayTimeStamp();
-                  this.progressionSlider.setThumbPosition(0);
-                  this.video.currentTime = 0;
-                  this.playPauseButton.querySelector(".play_icon").classList.remove("hidden");
-                  this.playPauseButton.querySelector(".pause_icon").classList.add("hidden");
-                  this.playPauseButton.querySelector(".replay_icon").classList.add("hidden");
-                  this.video.addEventListener("timeupdate", this.timeUpdate.bind(this))
+                    this.updateDisplayTimeStamp();
+                    this.progressionSlider.setThumbPosition(0);
+                    this.video.currentTime = 0;
+                    this.playPauseButton.querySelector(".play_icon").classList.remove("hidden");
+                    this.playPauseButton.querySelector(".pause_icon").classList.add("hidden");
+                    this.playPauseButton.querySelector(".replay_icon").classList.add("hidden");
+                    this.video.addEventListener("timeupdate", this.timeUpdate.bind(this))
                 }, { once: true });
             } else {
                 this.updateDisplayTimeStamp();
@@ -248,12 +249,12 @@ export class VideoPlayer {
         }
         clearTimeout(this.idTimeoutControls);
         this.videoContainer.style.cursor = "";
-        this.controls.classList.remove("hide");
+        this.controls.classList.add("active");
         this.controls.setAttribute("aria-hidden", "false");
 
         this.idTimeoutControls = setTimeout(() => {
             this.videoContainer.style.cursor = "none";
-            this.controls.classList.add("hide");
+            this.controls.classList.remove("active");
             this.controls.setAttribute("aria-hidden", "true");
         }, TIME_CONTROLS_ARE_UP)
     }
@@ -447,6 +448,8 @@ export class VideoPlayer {
                 }
                 //si la vidéo joue cache les controls
                 this.ifTouchScreenStartTimeout();
+            }).catch((e) => {
+                console.log(e);
             });
 
     }

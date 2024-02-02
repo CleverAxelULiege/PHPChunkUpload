@@ -594,11 +594,11 @@ export class Recorder {
             return;
         }
 
-        if (this.element.RECORDED_ELEMENT.src != "") {
-            if (!window.confirm(this.tradRecorder.overwritePreviousRecording)) {
-                return;
-            }
-        }
+        // if (this.element.RECORDED_ELEMENT.src != "") {
+        //     if (!window.confirm(this.tradRecorder.overwritePreviousRecording)) {
+        //         return;
+        //     }
+        // }
 
         this.closeNotificationTimeout();
         this.isRecording = true;
