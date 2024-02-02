@@ -617,11 +617,11 @@ export class Recorder {
 
             if (!this.mediaStreamConstraint.video || (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled)) {
                 newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
+                this.mediaRecorder = new MediaRecorder(newMediaStream);
             } else {
                 this.mediaRecorder = new MediaRecorder(this.mediaStream);
             }
 
-            // this.mediaRecorder = new MediaRecorder(newMediaStream);
         } else {
 
             this.mediaRecorder = new MediaRecorder(this.mediaStream);
