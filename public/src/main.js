@@ -80,10 +80,9 @@ init();
 async function init() {
     page.retrieveDOMElements();
     try {
-
-        if (!testForMediaRecorderMediaStreamAPI()) {
-            throw DEVICE_STATUS.unavailableMediaRecorderMediaStream;
-        }
+        
+        //va tester si MediaRecorder & MediaStream existe. Si n'existe pas ça nous envoie dans le CATCH
+        device.testForMediaRecorderMediaStreamAPI();
 
         videoPlayer = new VideoPlayer(document.querySelector(".video_player"));
 
@@ -122,17 +121,6 @@ async function init() {
             .displayErrors(status, TRADUCTION_ERROR_DEVICE)
             .removePossibilityToRecord();
     }
-}
-
-function testForMediaRecorderMediaStreamAPI() {
-    if (!("MediaRecorder" in window)) {
-        return false;
-    }
-    if (!("MediaStream" in window)) {
-        return false;
-    }
-
-    return true;
 }
 
 function testForAsyncFetchAndArrowFunctionAndES6Class() {
