@@ -76,6 +76,8 @@
  * @property {string} unavailableAudioDeviceVideoDevice
  * @property {string} unavailablePermissionToUseDevices
  * @property {string} unavailablePermissionToUseAudioDeviceWithVideoDevice
+ * @property {string} unavailableMediaRecorderMediaStream
+ * @property {string} unavailableMimeType
  * @property {string} unknownError
  */
 

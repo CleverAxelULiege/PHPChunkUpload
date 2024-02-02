@@ -84,17 +84,21 @@ async function init() {
         //va tester si MediaRecorder & MediaStream existe. Si n'existe pas ça nous envoie dans le CATCH
         device.testForMediaRecorderMediaStreamAPI();
 
-        videoPlayer = new VideoPlayer(document.querySelector(".video_player"));
-
+        //va tester les différents mimeTypes & codecs disponibles/proposés, si aucun n'a été trouvé, ça nous envoie dans le CATCH sinon ça nous renvoie un des types dispo.
+        let mimeType = device.testForMimeTypesAndCodecs();
+        
+        
         // console.log("audio/webm:"+MediaRecorder.isTypeSupported('audio/webm;codecs=opus'));
         //askPermissions peut rater et nous envoyer dans le CATCH
         let deviceDetails = await device.askPermissions();
-
+        
         mediaStreamConstraint = {
             audio: deviceDetails.audio.hasPermission && deviceDetails.audio.exists,
             video: deviceDetails.video.hasPermission && deviceDetails.video.exists
         }
-
+        
+        videoPlayer = new VideoPlayer(document.querySelector(".video_player"));
+        
         page
             .removeUnavailableDeviceFromSelectableDevice(mediaStreamConstraint)
             .enumerateDevicesInSelect(deviceDetails.audio.deviceId, deviceDetails.video.deviceId, mediaStreamConstraint)
@@ -108,6 +112,7 @@ async function init() {
 
         recorder = new Recorder(TRADUCTION_RECORDER, TRADUCTION_RECORDED, TRADUCTION_TIME, audioVisualizer, videoPlayer);
         recorder
+            .setMimeType(mimeType)
             .setDeviceConstraint(mediaStreamConstraint, deviceDetails.audio.deviceId, deviceDetails.video.deviceId)
             .initEventListeners()
             .startStreamingToPreviewVideo()

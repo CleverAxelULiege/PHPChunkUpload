@@ -115,8 +115,11 @@ export class Recorder {
     /**@private */
     isFullscreen = false;
 
-    /**@private */
-    mimeType = VIDEO_MIME_TYPE;
+    /**
+     * @private 
+     * @type {string|null}
+     */
+    mimeType = null;
 
     /**
      * @private
@@ -198,6 +201,14 @@ export class Recorder {
 
         this.JSsupportAspectRatio();
         this.getPreference();
+    }
+
+    /**
+     * @param {string} mimeType 
+     */
+    setMimeType(mimeType){
+        this.mimeType = mimeType;
+        return this;
     }
 
     /**
@@ -606,10 +617,13 @@ export class Recorder {
 
             if (!this.mediaStreamConstraint.video || (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled)) {
                 newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
+            } else {
+                this.mediaRecorder = new MediaRecorder(this.mediaStream);
             }
 
-            this.mediaRecorder = new MediaRecorder(newMediaStream);
+            // this.mediaRecorder = new MediaRecorder(newMediaStream);
         } else {
+
             this.mediaRecorder = new MediaRecorder(this.mediaStream);
         }
 
@@ -709,7 +723,7 @@ export class Recorder {
 
         this.mediaRecorder.onstop = () => {
             console.info("Stopped the recording");
-            this.recordedBlob = new Blob(this.recordedChunks, { type: this.mimeType + "; codecs=vp8, vorbis" });
+            this.recordedBlob = new Blob(this.recordedChunks, {type: this.mimeType});
 
             URL.revokeObjectURL(this.element.RECORDED_ELEMENT.src);
             URL.revokeObjectURL(this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.href);

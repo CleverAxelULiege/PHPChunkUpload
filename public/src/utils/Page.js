@@ -1,4 +1,4 @@
-import { DEVICE_STATUS } from "./Device.js";
+import { AVAILABLE_MIME_TYPES, DEVICE_STATUS } from "./Device.js";
 import "./typedefs.js"
 export class Page {
 
@@ -63,6 +63,10 @@ export class Page {
                 break;
             case DEVICE_STATUS.unavailableMediaRecorderMediaStream:
                 this.element.ERROR_BOX_DEVICE_DIV.innerHTML = `<p>${traduction.unavailableMediaRecorderMediaStream} ${traduction.default}</p>`;
+                break;
+            case DEVICE_STATUS.unavailableMimeType:
+                this.element.ERROR_BOX_DEVICE_DIV.innerHTML = 
+                `<p>${traduction.unavailableMimeType.replace(":PLACEHOLDER", "<ul style='padding-left: 20px;'>" + AVAILABLE_MIME_TYPES.map((type) => `<li>${type}</li>`).join("") + "</ul><br><br>")} ${traduction.default}</p>`;
                 break;
             default:
                 if (deviceStatus != DEVICE_STATUS.ok) {
