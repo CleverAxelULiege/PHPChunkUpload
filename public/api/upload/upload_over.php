@@ -10,7 +10,7 @@ require(__DIR__ . "/../../../vendor/autoload.php");
 
 
 HeaderManager::setContentTypeToJson();
-preventLargeContentLengthOrFileTooBig();
+JSONResponsePreventLargeContentLengthOrFileTooBig();
 
 $payload = $_POST["payload"] ?? null;
 

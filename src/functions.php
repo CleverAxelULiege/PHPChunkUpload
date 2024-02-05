@@ -2,7 +2,7 @@
 
 use Surveys\Upload\FileManager;
 use Surveys\HeaderManager;
-function preventLargeContentLengthOrFileTooBig()
+function JSONResponsePreventLargeContentLengthOrFileTooBig()
     {
         if (
             isset($_SERVER["CONTENT_LENGTH"]) &&
