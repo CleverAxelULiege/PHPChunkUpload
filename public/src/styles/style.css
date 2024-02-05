@@ -54,6 +54,7 @@ select {
 }
 
 @media (hover: hover) {
+
     select:hover,
     select:focus {
         outline: 1px solid var(--light_cyan);
@@ -62,6 +63,11 @@ select {
 
 main {
     flex-grow: 1;
+}
+
+.shadow {
+    -webkit-box-shadow: 0px 5px 7px -6px #000000;
+    box-shadow: 0px 5px 7px -6px #000000;
 }
 
 footer {
