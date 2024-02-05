@@ -32,7 +32,7 @@ if ($successToMoveFile === false) {
 
     switch ($fileManager->statusUploadedFile) {
 
-        case FileManager::STATUS_FAILED_TO_MOVE_FILE:
+        case FileStatusCodeManager::FAILED_TO_MOVE_FILE:
             HeaderManager::setServiceUnavailableStatus();
             echo json_encode([
                 "msg" => "Resend file.",
@@ -41,7 +41,7 @@ if ($successToMoveFile === false) {
             ]);
             break;
 
-        case FileManager::STATUS_CHUNK_TOO_BIG:
+        case FileStatusCodeManager::FILE_TOO_BIG:
             HeaderManager::setBadRequestStatus();
             echo json_encode([
                 "msg" => "Chunk received too big. Must be at or below :" . FileManager::MAX_CHUNK_SIZE_BYTES,
@@ -49,11 +49,19 @@ if ($successToMoveFile === false) {
             ]);
             break;
 
-        case FileManager::STATUS_NO_FILE_SENT:
+        case FileStatusCodeManager::NO_FILE_SENT:
             HeaderManager::setBadRequestStatus();
             echo json_encode([
                 "msg" => "No file/chunk file sent.",
                 "status" => FileStatusCodeManager::NO_FILE_SENT
+            ]);
+            break;
+
+        default:
+            HeaderManager::setBadRequestStatus();
+            echo json_encode([
+                "msg" => "An unknown error occured.",
+                "status" => FileStatusCodeManager::UNKNOWN_ERROR
             ]);
             break;
     }

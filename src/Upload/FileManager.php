@@ -11,10 +11,6 @@ class FileManager
 {
     private UploadStateDTO|null $uploadState;
 
-    const STATUS_FAILED_TO_MOVE_FILE = 0;
-    const STATUS_DIRECTORY_DOESNT_EXIST = 1;
-    const STATUS_CHUNK_TOO_BIG = 2;
-    const STATUS_NO_FILE_SENT = 3;
     public int $statusUploadedFile = -1;
 
     public function __construct(private array $traduction, private RequestUploadDTO $requestUpload)
@@ -270,17 +266,17 @@ class FileManager
     public function moveUploadedFileToTemp(): bool
     {
         if (!is_dir(FileManager::PATH_TO_UPLOAD_TEMP . "/" . $this->requestUpload->sessionTokenUpload)) {
-            $this->statusUploadedFile = FileManager::STATUS_DIRECTORY_DOESNT_EXIST;
+            $this->statusUploadedFile = FileStatusCodeManager::DIRECTORY_DOESNT_EXIST;
             return false;
         }
 
         if (empty($_FILES[FileManager::FILE_FIELD_NAME]) || $_FILES[FileManager::FILE_FIELD_NAME]["size"] <= 0) {
-            $this->statusUploadedFile = FileManager::STATUS_NO_FILE_SENT;
+            $this->statusUploadedFile = FileStatusCodeManager::NO_FILE_SENT;
             return false;
         }
 
         if ($_FILES[FileManager::FILE_FIELD_NAME]["size"] > FileManager::MAX_CHUNK_SIZE_BYTES) {
-            $this->statusUploadedFile = FileManager::STATUS_CHUNK_TOO_BIG;
+            $this->statusUploadedFile = FileStatusCodeManager::FILE_TOO_BIG;
             return false;
         }
 
@@ -289,7 +285,7 @@ class FileManager
         $successToMoveFile = move_uploaded_file($_FILES[FileManager::FILE_FIELD_NAME]["tmp_name"], $pathToNewFile);
 
         if ($successToMoveFile === false) {
-            $this->statusUploadedFile = FileManager::STATUS_FAILED_TO_MOVE_FILE;
+            $this->statusUploadedFile = FileStatusCodeManager::FILE_TOO_BIG;
             return false;
         }
         
