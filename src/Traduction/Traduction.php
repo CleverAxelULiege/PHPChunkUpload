@@ -17,6 +17,16 @@ class Traduction
         }
     }
 
+    public static function retrieveResponseMessage(){
+        $lng = $_GET["lng"] ?? Traduction::DEFAULT;
+
+        if (self::existsInFile($lng)) {
+            return require(__DIR__ . "/response_message/" . $lng . ".php");
+        } else {
+            return require(__DIR__ . "/response_message/" . Traduction::DEFAULT . ".php");
+        }
+    }
+
     public static function getLng()
     {
         $lng = $_GET["lng"] ?? Traduction::DEFAULT;

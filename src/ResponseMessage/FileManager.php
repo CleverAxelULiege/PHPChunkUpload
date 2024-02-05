@@ -1,6 +1,6 @@
 <?php
 
-namespace Surveys\Upload;
+namespace Surveys\ResponseMessage;
 
 use Surveys\Mapper;
 use Surveys\HeaderManager;

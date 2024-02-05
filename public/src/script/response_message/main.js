@@ -9,13 +9,13 @@ if (!testForAsyncFetchAndArrowFunctionAndES6Class()) {
 
 document.querySelector("main").style.display = "";
 
-import { AudioVisualizer } from "./utils/AudioVisualizer.js";
-import { DEVICE_STATUS, Device } from "./utils/Device.js";
-import { Page } from "./utils/Page.js";
-import { Recorder } from "./utils/Recorder.js";
-import { UploadManager } from "./utils/UploadManager.js";
-import "./utils/typedefs.js"
-import { VideoPlayer } from "./utils/video_player/VideoPlayer.js";
+import { AudioVisualizer } from "./AudioVisualizer.js";
+import { Device } from "./Device.js";
+import { Page } from "./Page.js";
+import { Recorder } from "./Recorder.js";
+import { UploadManager } from "./UploadManager.js";
+import { VideoPlayer } from "../utils/video_player/VideoPlayer.js";
+import "./typedefs.js";
 
 
 /**@type {MediaStreamConstraints} */

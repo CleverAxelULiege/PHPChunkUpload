@@ -15,7 +15,7 @@ JSONResponsePreventLargeContentLengthOrFileTooBig();
 $payload = $_POST["payload"] ?? null;
 
 $requestUpload = Mapper::JSONtoRequestUpload(Mapper::jsonDecode($payload));
-$fileManager = new FileManager(Traduction::retrieve(), $requestUpload);
+$fileManager = new FileManager(Traduction::retrieveResponseMessage(), $requestUpload);
 
 
 if (!$fileManager->validateCSRFToken($requestUpload)) {

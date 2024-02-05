@@ -1,7 +1,8 @@
-import { SUPPORT_FULLSCREEN, UPLOAD_MANAGER } from "../main.js";
+import { SUPPORT_FULLSCREEN, UPLOAD_MANAGER } from "./main.js";
 import { AudioVisualizer } from "./AudioVisualizer.js";
+import { VideoPlayer } from "../utils/video_player/VideoPlayer.js";
 import "./typedefs.js";
-import { VideoPlayer } from "./video_player/VideoPlayer.js";
+
 const VIDEO_MIME_TYPE = "video/webm";
 const AUDIO_MIME_TYPE = "audio/webm";
 

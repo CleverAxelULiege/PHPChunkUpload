@@ -3,7 +3,7 @@
 use Surveys\Traduction\Traduction;
 
 require(__DIR__ . "/../vendor/autoload.php");
-define("TRADUCTION", Traduction::retrieve());
+define("TRADUCTION", Traduction::retrieveResponseMessage());
 ?>
 <!doctype html>
 <html lang="<?= Traduction::getLng() ?>">
@@ -11,14 +11,14 @@ define("TRADUCTION", Traduction::retrieve());
 <head>
     <meta charset="UTF-8" />
     <!-- https://stackoverflow.com/questions/29454982/javascript-buffer-video-from-blobs-source -->
-    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./src/styles/recorder.css">
-    <link rel="stylesheet" href="./src/styles/recorded.css">
-    <link rel="stylesheet" href="./src/styles/video_player.css">
-    <link rel="stylesheet" href="./src/styles/toggle_switch.css">
-    <link rel="stylesheet" href="./src/styles/upload.css">
-    <link rel="stylesheet" href="./src/styles/upload_file.css">
+    <link rel="stylesheet" href="./src/styles/style.css">
+    <link rel="stylesheet" href="./src/styles/response_message/recorder.css">
+    <link rel="stylesheet" href="./src/styles/response_message/recorded.css">
+    <link rel="stylesheet" href="./src/script/utils/video_player/video_player.css">
+    <link rel="stylesheet" href="./src/styles/utils/toggle_switch.css">
+    <link rel="stylesheet" href="./src/styles/response_message/upload_progress.css">
+    <link rel="stylesheet" href="./src/styles/response_message/upload_file.css">
     <title>Js recorder</title>
 </head>
 
@@ -238,6 +238,6 @@ define("TRADUCTION", Traduction::retrieve());
     const TRADUCTION_TIME = <?php echo json_encode(TRADUCTION["time"], JSON_UNESCAPED_UNICODE) ?>;
     const TRADUCTION_ERROR_DEVICE = <?php echo json_encode(TRADUCTION["errorMessages"]["device"], JSON_UNESCAPED_UNICODE) ?>;
 </script>
-<script type="module" src="./src/main.js"></script>
+<script type="module" src="./src/script/response_message/main.js"></script>
 
 </html>
