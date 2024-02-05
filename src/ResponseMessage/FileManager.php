@@ -3,7 +3,7 @@
 namespace Surveys\ResponseMessage;
 
 use Surveys\Mapper;
-use Surveys\HeaderManager;
+use Surveys\Http\HeaderManager;
 use Surveys\DTOs\UploadStateDTO;
 use Surveys\DTOs\RequestUploadDTO;
 
@@ -118,7 +118,7 @@ class FileManager
         }
 
         if ($errorMessages !== []) {
-            HeaderManager::setBadRequestStatus();
+            HeaderManager::badRequestStatus();
             echo json_encode([
                 "msg" => $errorMessages
             ], JSON_UNESCAPED_UNICODE);

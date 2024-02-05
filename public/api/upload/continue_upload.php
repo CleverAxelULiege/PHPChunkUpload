@@ -1,13 +1,13 @@
 <?php
 
-use Surveys\Upload\FileManager;
-use Surveys\HeaderManager;
 use Surveys\Mapper;
+use Surveys\Http\HeaderManager;
 use Surveys\Traduction\Traduction;
+use Surveys\ResponseMessage\FileManager;
 
 require(__DIR__ . "/../../../vendor/autoload.php");
 
-HeaderManager::setContentTypeToJson();
+HeaderManager::contentTypeToJson();
 JSONResponsePreventLargeContentLengthOrFileTooBig();
 
 $payload = $_POST["payload"] ?? null;
@@ -17,7 +17,7 @@ $fileManager = new FileManager(Traduction::retrieveResponseMessage(), $requestUp
 
 if (!$fileManager->isTempFolderActive()) {
     $fileManager->removeUploadTempDir($requestUpload->sessionTokenUpload);
-    HeaderManager::setBadRequestStatus();
+    HeaderManager::badRequestStatus();
     echo json_encode([
         "msg" => "Upload is no longer active or doesn't exist. Restart to upload from the beginning."
     ]);
@@ -32,7 +32,7 @@ if($fileManager->hashedFileCorrespond()){
         "CSRFToken" => $fileManager->refreshCSRFToken(),
     ]);
 } else {
-    HeaderManager::setBadRequestStatus();
+    HeaderManager::badRequestStatus();
     echo json_encode([
         "msg" => "File doesn't correspond. Restart to upload from the beginning.",
     ]);

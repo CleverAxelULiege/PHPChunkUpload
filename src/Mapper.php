@@ -4,11 +4,21 @@ namespace Surveys;
 
 use stdClass;
 use Exception;
-use Surveys\Upload\FileManager;
+use Surveys\ResponseMessage\FileManager;
 use Surveys\DTOs\UploadStateDTO;
 use Surveys\DTOs\RequestUploadDTO;
+use Surveys\DTOs\UserDTO;
 
 class Mapper{
+
+    public static function toUserDTO(stdClass $user){
+        return new UserDTO(
+            $user->id,
+            $user->username,
+            $user->password,
+            json_decode($user->roles),
+        );
+    }
 
     public static function JSONtoUploadState(stdClass $payload){
         return new UploadStateDTO(

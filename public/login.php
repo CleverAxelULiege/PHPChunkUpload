@@ -1,8 +1,15 @@
 <?php
 
+use Surveys\Http\Redirect;
 use Surveys\Traduction\Traduction;
 
 require(__DIR__ . "/../vendor/autoload.php");
+sessionStart();
+
+if(isset($_SESSION["user_id"])){
+    Redirect::to("/index.php");
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= Traduction::getLng() ?>">

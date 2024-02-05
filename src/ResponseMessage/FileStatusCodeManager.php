@@ -1,6 +1,6 @@
 <?php
 
-namespace Surveys\Upload;
+namespace Surveys\ResponseMessage;
 
 /**
  * Doit être en accord avec UploadManager.js

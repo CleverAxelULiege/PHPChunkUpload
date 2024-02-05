@@ -1,13 +1,13 @@
 <?php
 
-use Surveys\Upload\FileManager;
-use Surveys\HeaderManager;
 use Surveys\Mapper;
+use Surveys\Http\HeaderManager;
 use Surveys\Traduction\Traduction;
+use Surveys\ResponseMessage\FileManager;
 
 require(__DIR__ . "/../../../vendor/autoload.php");
 
-HeaderManager::setContentTypeToJson();
+HeaderManager::contentTypeToJson();
 JSONResponsePreventLargeContentLengthOrFileTooBig();
 
 $payload = $_POST["payload"] ?? null;

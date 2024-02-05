@@ -1,15 +1,15 @@
 <?php
 
-use Surveys\Upload\FileManager;
-use Surveys\HeaderManager;
+use Surveys\ResponseMessage\FileManager;
+use Surveys\Http\HeaderManager;
 use Surveys\Mapper;
-use Surveys\Upload\FileStatusCodeManager;
+use Surveys\ResponseMessage\FileStatusCodeManager;
 use Surveys\Traduction\Traduction;
 
 require(__DIR__ . "/../../../vendor/autoload.php");
 
 
-HeaderManager::setContentTypeToJson();
+HeaderManager::contentTypeToJson();
 JSONResponsePreventLargeContentLengthOrFileTooBig();
 
 $payload = $_POST["payload"] ?? null;
@@ -19,7 +19,7 @@ $fileManager = new FileManager(Traduction::retrieveResponseMessage(), $requestUp
 
 
 if (!$fileManager->validateCSRFToken($requestUpload)) {
-    HeaderManager::setUnauthorizedStatus();
+    HeaderManager::unauthorizedStatus();
 
     echo json_encode([
         "msg" => "Failed to validate the CSRF token.",
