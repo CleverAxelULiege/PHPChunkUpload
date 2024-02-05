@@ -1,6 +1,6 @@
 <?php
 
-namespace Upload\Traduction;
+namespace Surveys\Traduction;
 
 class Traduction
 {

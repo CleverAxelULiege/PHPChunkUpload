@@ -1,9 +1,9 @@
 <?php
 
-use Upload\FileManager;
-use Upload\HeaderManager;
-use Upload\Mapper;
-use Upload\Traduction\Traduction;
+use Surveys\Upload\FileManager;
+use Surveys\HeaderManager;
+use Surveys\Mapper;
+use Surveys\Traduction\Traduction;
 
 require(__DIR__ . "/../../../vendor/autoload.php");
 
@@ -12,7 +12,7 @@ preventLargeContentLengthOrFileTooBig();
 
 $payload = $_POST["payload"] ?? null;
 
-$requestUpload = Mapper::toRequestUpload(Mapper::jsonDecode($payload));
+$requestUpload = Mapper::JSONtoRequestUpload(Mapper::jsonDecode($payload));
 $fileManager = new FileManager(Traduction::retrieve(), $requestUpload);
 
 if (!$fileManager->fileRespectRules()) {

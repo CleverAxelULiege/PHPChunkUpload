@@ -1,8 +1,0 @@
-{"currentChunkFile":0,"currentFileSize":0,"extension":"webm","CSRFToken":"a16ed0b9cfdf367c355e8d112eab67ec","hashedFile":"80b4ca9925deab451d5bb0a83d8a02ce3106cc70446774336cd84bbef48c7f99"}
-{"currentChunkFile":1,"currentFileSize":1000000,"extension":"webm","CSRFToken":"c4e5ef6a420eddcf7325fc53f2342515","hashedFile":null}
-{"currentChunkFile":2,"currentFileSize":2000000,"extension":"webm","CSRFToken":"8c4554988a38e2b512bed031b9093cbb","hashedFile":null}
-{"currentChunkFile":3,"currentFileSize":3000000,"extension":"webm","CSRFToken":"1f08b32eadf1baccea314987de89a648","hashedFile":null}
-{"currentChunkFile":0,"currentFileSize":0,"extension":"webm","CSRFToken":"cdb2473de3faef375b114e4c97c7b694","hashedFile":"80b4ca9925deab451d5bb0a83d8a02ce3106cc70446774336cd84bbef48c7f99"}
-{"currentChunkFile":1,"currentFileSize":1000000,"extension":"webm","CSRFToken":"23477c0a71cac0654056458050adedb0","hashedFile":"80b4ca9925deab451d5bb0a83d8a02ce3106cc70446774336cd84bbef48c7f99"}
-{"currentChunkFile":2,"currentFileSize":2000000,"extension":"webm","CSRFToken":"90a036d69fd568383a457667052a69cb","hashedFile":"80b4ca9925deab451d5bb0a83d8a02ce3106cc70446774336cd84bbef48c7f99"}
-{"currentChunkFile":3,"currentFileSize":3000000,"extension":"webm","CSRFToken":"4efa10b4a6e03680a66ac5ef6fbaf3e3","hashedFile":"80b4ca9925deab451d5bb0a83d8a02ce3106cc70446774336cd84bbef48c7f99"}

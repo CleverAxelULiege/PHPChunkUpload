@@ -1,10 +1,11 @@
 <?php
 
-namespace Upload;
+namespace Surveys\Upload;
 
-use DateTime;
-use Upload\DTOs\RequestUploadDTO;
-use Upload\DTOs\UploadStateDTO;
+use Surveys\Mapper;
+use Surveys\HeaderManager;
+use Surveys\DTOs\UploadStateDTO;
+use Surveys\DTOs\RequestUploadDTO;
 
 class FileManager
 {
@@ -28,8 +29,8 @@ class FileManager
         }
     }
 
-    const PATH_TO_UPLOAD_TEMP = __DIR__ . "/../upload/temp";
-    const PATH_TO_UPLOAD_BUILD = __DIR__ . "/../upload/build";
+    const PATH_TO_UPLOAD_TEMP = __DIR__ . "/../../upload/temp";
+    const PATH_TO_UPLOAD_BUILD = __DIR__ . "/../../upload/build";
 
     const COOKIE_NAME = "session_token_upload";
 
@@ -154,7 +155,7 @@ class FileManager
             return null;
         }
 
-        return Mapper::toUploadState(json_decode($uploadStateJson, false));
+        return Mapper::JSONtoUploadState(json_decode($uploadStateJson, false));
     }
 
     public function createTempFolderAndGetCSRFToken(): string

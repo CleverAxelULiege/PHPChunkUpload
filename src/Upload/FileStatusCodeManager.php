@@ -1,8 +1,8 @@
 <?php
 
-namespace Upload;
+namespace Surveys\Upload;
 
-class StatusCodeManager
+class FileStatusCodeManager
 {
     const NO_FILE_SENT = 0;
     const FILE_TOO_BIG = 1;

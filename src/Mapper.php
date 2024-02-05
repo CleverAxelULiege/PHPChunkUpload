@@ -1,15 +1,16 @@
 <?php
 
-namespace Upload;
+namespace Surveys;
 
 use stdClass;
 use Exception;
-use Upload\DTOs\UploadStateDTO;
-use Upload\DTOs\RequestUploadDTO;
+use Surveys\Upload\FileManager;
+use Surveys\DTOs\UploadStateDTO;
+use Surveys\DTOs\RequestUploadDTO;
 
 class Mapper{
 
-    public static function toUploadState(stdClass $payload){
+    public static function JSONtoUploadState(stdClass $payload){
         return new UploadStateDTO(
             $payload->currentChunkFile,
             $payload->currentFileSize,
@@ -19,7 +20,7 @@ class Mapper{
         );
     }
 
-    public static function toRequestUpload(stdClass $payload){
+    public static function JSONtoRequestUpload(stdClass $payload){
         $requestUpload = new RequestUploadDTO();
         $requestUpload->fileName = $payload->fileName ?? null;
         $requestUpload->fileSize = $payload->fileSize ?? null;

@@ -1,7 +1,7 @@
 <?php
 
-use Upload\FileManager;
-use Upload\HeaderManager;
+use Surveys\Upload\FileManager;
+use Surveys\HeaderManager;
 function preventLargeContentLengthOrFileTooBig()
     {
         if (

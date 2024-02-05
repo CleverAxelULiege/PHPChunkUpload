@@ -1,6 +1,6 @@
 <?php
 
-use Upload\Traduction\Traduction;
+use Surveys\Traduction\Traduction;
 
 require(__DIR__ . "/../vendor/autoload.php");
 define("TRADUCTION", Traduction::retrieve());

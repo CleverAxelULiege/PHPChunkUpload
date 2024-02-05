@@ -1,6 +1,6 @@
 <?php
 
-namespace Upload\DTOs;
+namespace Surveys\DTOs;
 
 class UploadStateDTO
 {

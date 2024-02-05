@@ -1,6 +1,6 @@
 <?php
 
-namespace Upload;
+namespace Surveys;
 
 class HeaderManager{
     public static function setBadRequestStatus(){
