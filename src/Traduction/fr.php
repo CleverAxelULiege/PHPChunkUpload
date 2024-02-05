@@ -33,7 +33,7 @@ return [
         "notificationStartRecording" => "Commencer l'enregistrement",
         "notificationTimeoutRecording" => "Temps écoulé ! L'enregistrement ne peut pas durer (approximativement) plus de",
         "notificationLimitSizeReachedRecording" => "Taille maximale de l'enregistrement atteinte. L'enregistrement ne peut pas faire (approximativement) plus de",
-        "downloadRecordingAtEnd" => "Télécharger automatiquement l'enregistrement à sa fin. (Au format webm)",
+        "downloadRecordingAtEnd" => "Télécharger automatiquement l'enregistrement à sa fin. <i>(Au format WEBM ou MP4, cela dépend de ce que votre navigateur supporte)</i>",
         "dontRecordOscilloscope" => "Ne pas enregistrer l'oscilloscope si possible (<i>cela réduira la taille de l'enregistrement si vous n'enregistrez qu'un message vocal</i>)",
         "video" => [
             "disable" => "Périphérique vidéo désactivé.",

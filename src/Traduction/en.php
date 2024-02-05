@@ -33,7 +33,7 @@ return [
         "notificationStartRecording" => "Start the recording",
         "notificationTimeoutRecording" => "Time up! Recording cannot last (approximately) longer than",
         "notificationLimitSizeReachedRecording" => "Maximum recording size reached. Recording cannot be (approximately) larger than",
-        "downloadRecordingAtEnd" => "Automatically download the recording at the end. (In webm format)",
+        "downloadRecordingAtEnd" => "Automatically download the recording at the end. <i>(In WEBM or MP4 format, depending on what your browser supports)</i>",
         "dontRecordOscilloscope" => "Do not record the oscilloscope if possible (<i>this will reduce the recording size if you only record a voice message</i>).",
         "video" => [
             "disable" => "Video device disabled.",

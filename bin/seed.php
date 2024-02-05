@@ -61,6 +61,9 @@ function listCommands(){
 
     CLI::default("\n--------------------------\n");
 
-    CLI::info("\nphp bin/migration.php status\n");
-    CLI::default("\t-> Will check the status of the migrations, what is done or not.\n");
+    CLI::info("\nphp bin/migration.php truncate:<action>\n");
+    CLI::default("\t-> Two actions possibles : all or the name of your table.\n");
+    CLI::default("\t-> Will truncate by force and ignore your constraints (normally) of your table.\n");
+    CLI::default("\t-> Example : php bin/seed.php truncate:all will truncate all your tables\n");
+    CLI::default("\t-> Example : php bin/seed.php truncate:users will only truncate your table users.\n");
 }

@@ -2,6 +2,7 @@
 require(__DIR__ . "/../../../bin/CLI.php");
 require(__DIR__ . "/../../../vendor/autoload.php");
 
+use bin\CLI;
 use Database\Connection;
 use Database\Parent\Database;
 
@@ -81,7 +82,7 @@ try {
     fwrite($fstream, $fileContent);
     CLI::clear();
     CLI::info("Successfully created your seeding file as : ");
-    CLI::warning("database/seeds/" . $seedFile . ".php", TextStyle::UNDERLINE);
+    CLI::warning("database/seeds/" . $seedFile . ".php", CLI::UNDERLINE);
 } finally {
     fclose($fstream);
 }
