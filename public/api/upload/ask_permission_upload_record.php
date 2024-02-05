@@ -5,7 +5,7 @@ use Upload\HeaderManager;
 use Upload\Mapper;
 use Upload\Traduction\Traduction;
 
-require(__DIR__ . "/../vendor/autoload.php");
+require(__DIR__ . "/../../../vendor/autoload.php");
 
 HeaderManager::setContentTypeToJson();
 preventLargeContentLengthOrFileTooBig();

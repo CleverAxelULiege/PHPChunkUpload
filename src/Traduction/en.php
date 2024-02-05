@@ -63,6 +63,7 @@ return [
             "unavailablePermissionToUseDevices" => "You have not given your consent to use your microphone and/or camera.",
             "unavailablePermissionToUseAudioDeviceWithVideoDevice" => "You can't record a video without sound, so please give your consent to use your microphone.",
             "unavailableMediaRecorderMediaStream" => "Your browser does not support two useful functions for registering on the site.",
+            "unavailableMimeType" => "Your browser does not have one of these types MIME/codec proposed by this page to be able to record : :PLACEHOLDER",
             "unknownError" => "An unknown error has occurred. Please contact the person responsible."
         ]
     ],

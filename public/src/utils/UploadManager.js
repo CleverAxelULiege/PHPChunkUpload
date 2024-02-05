@@ -1,8 +1,8 @@
 const CHUNK_SIZE = 1000 * 1000;
-const UPLOAD_RECORD_LINK = "/upload_record.php?lng=" + document.documentElement.lang;
-const ASK_PERMISSION_TO_UPLOAD_LINK = "/ask_permission_upload_record.php?lng=" + document.documentElement.lang;
-const UPLOAD_OVER_LINK = "/upload_over.php?lng=" + document.documentElement.lang;
-const CONTINUE_UPLOAD_LINK = "/continue_upload.php?lng=" +  document.documentElement.lang;
+const UPLOAD_RECORD_LINK = "/api/upload/upload_record.php?lng=" + document.documentElement.lang;
+const ASK_PERMISSION_TO_UPLOAD_LINK = "/api/upload/ask_permission_upload_record.php?lng=" + document.documentElement.lang;
+const UPLOAD_OVER_LINK = "/api/upload/upload_over.php?lng=" + document.documentElement.lang;
+const CONTINUE_UPLOAD_LINK = "/api/upload/continue_upload.php?lng=" +  document.documentElement.lang;
 const ATTEMPTS_BEFORE_ABORTING = 5;
 
 const KEY_LOCALSTORAGE = "upload_in_progress";

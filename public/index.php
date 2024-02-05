@@ -13,17 +13,17 @@ define("TRADUCTION", Traduction::retrieve());
     <!-- https://stackoverflow.com/questions/29454982/javascript-buffer-video-from-blobs-source -->
     <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./src/style.css">
-    <link rel="stylesheet" href="./src/recorded.css">
-    <link rel="stylesheet" href="./src/video_player.css">
-    <link rel="stylesheet" href="./src/toggle_switch.css">
-    <link rel="stylesheet" href="./src/upload.css">
-    <link rel="stylesheet" href="./src//upload_file.css">
+    <link rel="stylesheet" href="./src/styles/recorder.css">
+    <link rel="stylesheet" href="./src/styles/recorded.css">
+    <link rel="stylesheet" href="./src/styles/video_player.css">
+    <link rel="stylesheet" href="./src/styles/toggle_switch.css">
+    <link rel="stylesheet" href="./src/styles/upload.css">
+    <link rel="stylesheet" href="./src/styles/upload_file.css">
     <title>Js recorder</title>
 </head>
 
-<body>
-    <main>
+<body >
+    <main style="display: none;">
         <div id="root">
 
             <div class="upload_file_container">
@@ -202,7 +202,7 @@ define("TRADUCTION", Traduction::retrieve());
                 </div>
             </div>
 
-            <div class="recorded_element_container ">
+            <div class="recorded_element_container hidden">
                 <h2><?= TRADUCTION["recorded"]["main"] ?> :</h2>
 
                 <div class="video_player">

@@ -115,8 +115,11 @@ export class Recorder {
     /**@private */
     isFullscreen = false;
 
-    /**@private */
-    mimeType = VIDEO_MIME_TYPE;
+    /**
+     * @private 
+     * @type {string|null}
+     */
+    mimeType = null;
 
     /**
      * @private
@@ -198,6 +201,14 @@ export class Recorder {
 
         this.JSsupportAspectRatio();
         this.getPreference();
+    }
+
+    /**
+     * @param {string} mimeType 
+     */
+    setMimeType(mimeType){
+        this.mimeType = mimeType;
+        return this;
     }
 
     /**
@@ -583,11 +594,11 @@ export class Recorder {
             return;
         }
 
-        if (this.element.RECORDED_ELEMENT.src != "") {
-            if (!window.confirm(this.tradRecorder.overwritePreviousRecording)) {
-                return;
-            }
-        }
+        // if (this.element.RECORDED_ELEMENT.src != "") {
+        //     if (!window.confirm(this.tradRecorder.overwritePreviousRecording)) {
+        //         return;
+        //     }
+        // }
 
         this.closeNotificationTimeout();
         this.isRecording = true;
@@ -606,10 +617,13 @@ export class Recorder {
 
             if (!this.mediaStreamConstraint.video || (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled)) {
                 newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
+                this.mediaRecorder = new MediaRecorder(newMediaStream);
+            } else {
+                this.mediaRecorder = new MediaRecorder(this.mediaStream);
             }
 
-            this.mediaRecorder = new MediaRecorder(newMediaStream);
         } else {
+
             this.mediaRecorder = new MediaRecorder(this.mediaStream);
         }
 
@@ -709,7 +723,7 @@ export class Recorder {
 
         this.mediaRecorder.onstop = () => {
             console.info("Stopped the recording");
-            this.recordedBlob = new Blob(this.recordedChunks, { type: this.mimeType + "; codecs=vp8, vorbis" });
+            this.recordedBlob = new Blob(this.recordedChunks, {type: this.mimeType});
 
             URL.revokeObjectURL(this.element.RECORDED_ELEMENT.src);
             URL.revokeObjectURL(this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.href);
@@ -717,7 +731,10 @@ export class Recorder {
             this.element.RECORDED_ELEMENT.src = URL.createObjectURL(this.recordedBlob);
 
             this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.href = this.element.RECORDED_ELEMENT.src;
-            this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.download = `${Date.now()}_my_recorded_message.webm`;
+
+            let fileName = `${Date.now()}_my_recorded_message${this.getExtensionFromMimeType()}`
+            UPLOAD_MANAGER.setDefaultFileName(fileName);
+            this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.download = fileName;
 
             setTimeout(() => {
                 if (this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked) {
@@ -728,6 +745,19 @@ export class Recorder {
             //affiche ce qui a été record si ce n'est pas déjà affiché
             this.element.RECORDED_ELEMENT_CONTAINER_DIV.classList.remove("hidden");
         }
+    }
+
+    /**@private */
+    getExtensionFromMimeType(){
+        if(this.mimeType.startsWith("video/webm")){
+            return ".webm"
+        }
+        
+        if(this.mimeType.startsWith("video/mp4")){
+            return ".mp4"
+        }
+
+        throw new Error("Unknown mime type");
     }
 
     /**

@@ -63,6 +63,7 @@ return [
             "unavailablePermissionToUseDevices" => "Vous n'avez pas donné votre accord pour utiliser votre micro et/ou votre caméra.",
             "unavailablePermissionToUseAudioDeviceWithVideoDevice" => "Vous ne pouvez pas enregistrer une vidéo sans son, veuillez donner votre accord pour utiliser votre micro.",
             "unavailableMediaRecorderMediaStream" => "Votre navigateur ne supporte pas deux fonctionnalités utiles pour pouvoir enregistrer sur le site.",
+            "unavailableMimeType" => "Votre navigateur n'a pas un de ces types MIME/codecs proposés par le site : :PLACEHOLDER",
             "unknownError" => "Une erreur inconnue est survenue. Contactez le responsable."
         ]
     ],
