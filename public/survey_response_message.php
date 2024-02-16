@@ -13,11 +13,12 @@ $user = $userRepository->getUserBySession();
 
 // needsToBeLogged($user);
 
+$traduction = Traduction::retrieveSurveyResponseMessage();
 
-define("TRADUCTION", Traduction::retrieveSurveyResponseMessage());
+define("TRADUCTION", $traduction->traductions);
 ?>
 <!doctype html>
-<html lang="<?= Traduction::getLng() ?>">
+<html lang="<?= $traduction->lng ?>">
 
 <head>
     <meta charset="UTF-8" />

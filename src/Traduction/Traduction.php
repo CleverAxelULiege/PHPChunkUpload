@@ -2,42 +2,21 @@
 
 namespace Surveys\Traduction;
 
+use Surveys\DTOs\TraductionDTO;
 use UnexpectedValueException;
 
 class Traduction
 {
     const DEFAULT = "fr";
 
-    // public static function retrieve()
-    // {
-    //     $lng = $_GET["lng"] ?? Traduction::DEFAULT;
-
-    //     if (self::existsInFile($lng)) {
-    //         return require(__DIR__ . "/" . $lng . ".php");
-    //     } else {
-    //         return require(__DIR__ . "/" . Traduction::DEFAULT . ".php");
-    //     }
-    // }
-
     public static function retrieveSurveyResponseMessage(){
         $lng = $_GET["lng"] ?? Traduction::DEFAULT;
 
         if (self::existsInFile($lng, __DIR__ . "/survey_response_message/")) {
-            return require(__DIR__ . "/survey_response_message/" . $lng . ".php");
+            return new TraductionDTO($lng, require(__DIR__ . "/survey_response_message/" . $lng . ".php"));
         } else {
-            return require(__DIR__ . "/survey_response_message/" . Traduction::DEFAULT . ".php");
+            return new TraductionDTO(Traduction::DEFAULT, require(__DIR__ . "/survey_response_message/" . Traduction::DEFAULT . ".php"));
         }
-    }
-
-    public static function getLng()
-    {
-        $lng = $_GET["lng"] ?? Traduction::DEFAULT;
-        return $lng;
-        // if (self::existsInFile($lng)) {
-        //     return $lng;
-        // } else {
-        //     return Traduction::DEFAULT;
-        // }
     }
 
     private static function existsInFile(string $lng, string $traductionPath)
