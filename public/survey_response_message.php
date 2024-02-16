@@ -11,10 +11,10 @@ $db = new DefaultDatabase();
 $userRepository = new UserRepository($db);
 $user = $userRepository->getUserBySession();
 
-needsToBeLogged($user);
+// needsToBeLogged($user);
 
 
-define("TRADUCTION", Traduction::retrieveResponseMessage());
+define("TRADUCTION", Traduction::retrieveSurveyResponseMessage());
 ?>
 <!doctype html>
 <html lang="<?= Traduction::getLng() ?>">
@@ -35,6 +35,7 @@ define("TRADUCTION", Traduction::retrieveResponseMessage());
 
 <body >
     <main style="display: none;">
+        
         <div id="root">
 
             <div class="upload_file_container">

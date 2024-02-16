@@ -15,7 +15,9 @@ require(__DIR__ . "/../../vendor/autoload.php");
 </head>
 <body>
     <main>
-        
+        <form action="">
+            
+        </form>
     </main>
 </body>
 </html>

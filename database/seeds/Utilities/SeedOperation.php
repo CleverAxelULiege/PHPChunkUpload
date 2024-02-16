@@ -29,8 +29,7 @@ class SeedOperation
         }
 
         foreach ($tables as $table) {
-            $this->db->run("TRUNCATE TABLE " . $table->tablename . " CASCADE;");
-            $this->db->run("TRUNCATE TABLE " . $table->tablename . " RESTART IDENTITY;");
+            $this->db->run("TRUNCATE TABLE " . $table->tablename . " RESTART IDENTITY CASCADE;");
         }
 
         CLI::clear();

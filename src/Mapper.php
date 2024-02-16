@@ -4,10 +4,11 @@ namespace Surveys;
 
 use stdClass;
 use Exception;
-use Surveys\ResponseMessage\FileManager;
+use Surveys\DTOs\UserDTO;
+use Surveys\Http\HeaderManager;
 use Surveys\DTOs\UploadStateDTO;
 use Surveys\DTOs\RequestUploadDTO;
-use Surveys\DTOs\UserDTO;
+use Surveys\ResponseMessage\FileManager;
 
 class Mapper{
 
@@ -43,7 +44,7 @@ class Mapper{
 
     public static function jsonDecode(string|null $jsonPayload){
         if($jsonPayload === null){
-            HeaderManager::setBadRequestStatus();
+            HeaderManager::badRequestStatus();
             echo json_encode([
                 "msg" => "No payload received."
             ]);
@@ -53,7 +54,7 @@ class Mapper{
         try{
             return json_decode($jsonPayload, false, 512, JSON_THROW_ON_ERROR);
         }catch(Exception $e){
-            HeaderManager::setBadRequestStatus();
+            HeaderManager::badRequestStatus();
             echo json_encode([
                 "msg" => "Failed to decode the JSON payload sent."
             ]);

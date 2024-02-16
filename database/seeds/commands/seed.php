@@ -45,5 +45,6 @@ try {
     $db->commitTransaction();
 } catch (Exception $e) {
     echo "FAILED TO SEED THE DATABASE ROLLING BACK THE SEEDING\n";
+    echo $e->getMessage();
     $db->rollbackTransaction();
 }

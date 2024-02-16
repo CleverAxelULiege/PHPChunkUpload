@@ -16,6 +16,8 @@ class Migration_20240205115826_create_table_users extends Migration
             $table->addColumn("id")->int()->autoIncrement()->primaryKey();
             $table->addColumn("username")->varchar(255)->nullable(false);
             $table->addColumn("password")->varchar(255)->nullable(false);
+            $table->addColumn("birthdate")->date()->nullable(false);
+            $table->addColumn("country")->varchar("255")->nullable(false);
             $table->addColumn("roles")->json()->nullable(false)->default(DefaultJson::EMPTY_ARRAY);
         });
     }
