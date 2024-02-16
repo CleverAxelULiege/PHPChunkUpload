@@ -3,7 +3,7 @@
 use Surveys\DTOs\UserDTO;
 use Surveys\Http\HeaderManager;
 use Surveys\Http\Redirect;
-use Surveys\ResponseMessage\FileManager;
+use Surveys\SurveyResponseMessage\FileManager;
 
 function sessionStart()
 {

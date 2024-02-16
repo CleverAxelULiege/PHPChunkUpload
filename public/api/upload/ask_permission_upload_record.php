@@ -3,7 +3,7 @@
 use Surveys\Mapper;
 use Surveys\Http\HeaderManager;
 use Surveys\Traduction\Traduction;
-use Surveys\ResponseMessage\FileManager;
+use Surveys\SurveyResponseMessage\FileManager;
 
 require(__DIR__ . "/../../../vendor/autoload.php");
 
@@ -13,7 +13,7 @@ JSONResponsePreventLargeContentLengthOrFileTooBig();
 $payload = $_POST["payload"] ?? null;
 
 $requestUpload = Mapper::JSONtoRequestUpload(Mapper::jsonDecode($payload));
-$fileManager = new FileManager(Traduction::retrieveResponseMessage(), $requestUpload);
+$fileManager = new FileManager(Traduction::retrieveSurveyResponseMessage()->traductions, $requestUpload);
 
 if (!$fileManager->fileRespectRules()) {
     exit;

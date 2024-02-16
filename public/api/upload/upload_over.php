@@ -1,9 +1,9 @@
 <?php
 
-use Surveys\ResponseMessage\FileManager;
+use Surveys\SurveyResponseMessage\FileManager;
 use Surveys\Http\HeaderManager;
 use Surveys\Mapper;
-use Surveys\ResponseMessage\FileStatusCodeManager;
+use Surveys\SurveyResponseMessage\FileStatusCodeManager;
 use Surveys\Traduction\Traduction;
 
 require(__DIR__ . "/../../../vendor/autoload.php");
@@ -15,7 +15,7 @@ JSONResponsePreventLargeContentLengthOrFileTooBig();
 $payload = $_POST["payload"] ?? null;
 
 $requestUpload = Mapper::JSONtoRequestUpload(Mapper::jsonDecode($payload));
-$fileManager = new FileManager(Traduction::retrieveResponseMessage(), $requestUpload);
+$fileManager = new FileManager(Traduction::retrieveSurveyResponseMessage()->traductions, $requestUpload);
 
 
 if (!$fileManager->validateCSRFToken($requestUpload)) {

@@ -8,7 +8,7 @@ use Surveys\DTOs\UserDTO;
 use Surveys\Http\HeaderManager;
 use Surveys\DTOs\UploadStateDTO;
 use Surveys\DTOs\RequestUploadDTO;
-use Surveys\ResponseMessage\FileManager;
+use Surveys\SurveyResponseMessage\FileManager;
 
 class Mapper{
 
