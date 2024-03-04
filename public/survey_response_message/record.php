@@ -169,7 +169,7 @@ define("TRADUCTION", $traduction->traductions);
                     </div>
                 </div>
 
-                <div class="options_recorder">
+                <!-- <div class="options_recorder">
 
                     <div class="toggle_switch_container">
                         <label for="download_on_stop_recording" class="toggle_switch">
@@ -186,7 +186,7 @@ define("TRADUCTION", $traduction->traductions);
                         </label>
                         <label for="dont_record_oscilloscope"><?= TRADUCTION["recorder"]["dontRecordOscilloscope"] ?></label>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <div class="recorded_element_container hidden">

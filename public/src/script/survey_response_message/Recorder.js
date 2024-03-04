@@ -195,13 +195,14 @@ export class Recorder {
             RECORDED_ELEMENT_CONTAINER_DIV: document.querySelector(".recorded_element_container"),
             NOTIFICATION_LIMIT_REACHED_BUTTON: document.querySelector(".recorder .notification_limit_reached"),
             DOWNLOAD_RECORDED_VIDEO_BUTTON: document.querySelector(".download_recorded_video_button"),
-            DOWNLOAD_RECORDING_AT_END_SWITCH: document.querySelector(".options_recorder #download_on_stop_recording"),
-            DONT_RECORD_OSCILLOSCOPE_SWITCH: document.querySelector(".options_recorder #dont_record_oscilloscope"),
+            // DOWNLOAD_RECORDING_AT_END_SWITCH: document.querySelector(".options_recorder #download_on_stop_recording"), can undo
+            // DONT_RECORD_OSCILLOSCOPE_SWITCH: document.querySelector(".options_recorder #dont_record_oscilloscope"), can undo
             UPLOAD_RECORDING_BUTTON: document.querySelector(".upload_recorded_video_button")
         };
 
         this.JSsupportAspectRatio();
-        this.getPreference();
+        //can undo
+        //this.getPreference();
     }
 
     /**
@@ -279,8 +280,8 @@ export class Recorder {
             return null;
         }
 
-        this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.addEventListener("change", this.savePreference.bind(this));
-        this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.addEventListener("change", this.savePreference.bind(this));
+        // this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.addEventListener("change", this.savePreference.bind(this));
+        // this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.addEventListener("change", this.savePreference.bind(this));
 
         this.element.OPEN_RECORDER_BUTTON.addEventListener("click", this.openRecorder.bind(this));
         this.element.CLOSE_RECORDER_BUTTON.addEventListener("click", this.closeRecorder.bind(this));
@@ -612,21 +613,31 @@ export class Recorder {
 
         this.animateButtonsIn();
         this.startCounterTimeElapsed();
+        
+        let newMediaStream = null;
 
-        if (this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.checked) {
-            let newMediaStream = null;
-
-            if (!this.mediaStreamConstraint.video || (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled)) {
-                newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
-                this.mediaRecorder = new MediaRecorder(newMediaStream);
-            } else {
-                this.mediaRecorder = new MediaRecorder(this.mediaStream);
-            }
-
+        if (!this.mediaStreamConstraint.video) {
+            newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
+            this.mediaRecorder = new MediaRecorder(newMediaStream);
         } else {
-
             this.mediaRecorder = new MediaRecorder(this.mediaStream);
         }
+
+        //can undo
+        // if (this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.checked) {
+        //     let newMediaStream = null;
+
+        //     if (!this.mediaStreamConstraint.video || (this.mediaStreamConstraint.video && !this.mediaStreamTrackVideo.enabled)) {
+        //         newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
+        //         this.mediaRecorder = new MediaRecorder(newMediaStream);
+        //     } else {
+        //         this.mediaRecorder = new MediaRecorder(this.mediaStream);
+        //     }
+
+        // } else {
+
+        //     this.mediaRecorder = new MediaRecorder(this.mediaStream);
+        // }
 
         //video/webm; codecs="vp8, vorbis"
         this.initEventListenersOnMediaRecorder();
@@ -737,11 +748,13 @@ export class Recorder {
             UPLOAD_MANAGER.setDefaultFileName(fileName);
             this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.download = fileName;
 
-            setTimeout(() => {
-                if (this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked) {
-                    this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.click();
-                }
-            }, 1000);
+
+            //can undo
+            // setTimeout(() => {
+            //     if (this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.checked) {
+            //         this.element.DOWNLOAD_RECORDED_VIDEO_BUTTON.click();
+            //     }
+            // }, 1000);
 
             //affiche ce qui a été record si ce n'est pas déjà affiché
             this.element.RECORDED_ELEMENT_CONTAINER_DIV.classList.remove("hidden");
