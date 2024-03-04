@@ -1,5 +1,19 @@
 #root>div.upload_file_container>h2 {
     text-align: left;
+    font-family: var(--second_font);
+    font-size: 20px;
+    font-weight: 300;
+}
+
+#root>div.upload_file_container {
+    position: relative;
+    max-width: 900px;
+    margin: 20px auto;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: white;
+    -webkit-box-shadow: 0px 5px 7px -6px #000000;
+    box-shadow: 0px 5px 7px -6px #000000;
 }
 
 .upload_file_container .separator {
