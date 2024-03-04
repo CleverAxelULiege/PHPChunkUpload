@@ -117,6 +117,7 @@
  * @property {string} dontRecordOscilloscope
  * @property {{
         * disable:string,
+        * disabledByInterviewer:string,
         * unavailable:string,
         * button:{
             * stop:string,

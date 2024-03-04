@@ -458,6 +458,7 @@ export class Recorder {
         }
 
         this.shouldOnlyRecordAudio = true;
+        this.element.VIDEO_DEVICE_DISABLED_H3.innerText = this.tradRecorder.video.disabledByInterviewer;
     }
 
     /**
@@ -477,7 +478,6 @@ export class Recorder {
             console.warn("Media stream not set");
             return;
         }
-        this.element.VIDEO_DEVICE_DISABLED_H3.innerText = this.tradRecorder.video.disable;
         this.element.VIDEO_DEVICE_DISABLED_H3.classList.toggle("hidden");
         this.mediaStreamTrackVideo.enabled = !this.mediaStreamTrackVideo.enabled;
         this.element.TOGGLE_VIDEO_DEVICE_BUTTON.classList.toggle("disabled_by_user");

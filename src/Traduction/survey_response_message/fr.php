@@ -37,6 +37,7 @@ return [
         "dontRecordOscilloscope" => "Ne pas enregistrer l'oscilloscope si possible (<i>cela réduira la taille de l'enregistrement si vous n'enregistrez qu'un message vocal</i>)",
         "video" => [
             "disable" => "Périphérique vidéo désactivé.",
+            "disabledByInterviewer" => "Périphérique vidéo désactivé pour cette enquête.",
             "unavailable" => "Périphérique vidéo indisponible.<br>Vous pouvez toujours enregistrer un message audio.",
             "button" => [
                 "stop" => "Arrêter l'enregistrement",

@@ -83,13 +83,13 @@ async function init() {
         .initEventListeners()
         .startStreamingToPreviewVideo()
         .then(() => {
+            let shouldOnlyRecordAudio = document.querySelector("main").getAttribute("data-should-only-record-audio") == "true" ? true : false;
+            if(shouldOnlyRecordAudio){
+                recorder.disableVideoDevice();
+            }
             // recorder.openRecorder();
         });
         
-        let shouldOnlyRecordAudio = document.querySelector("main").getAttribute("data-should-only-record-audio") == "true" ? true : false;
-        if(shouldOnlyRecordAudio){
-            recorder.disableVideoDevice();
-        }
 
         page.updateDeviceToMediaConstraint(recorder.updateDevice());
     } catch (status) {

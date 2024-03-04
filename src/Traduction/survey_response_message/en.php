@@ -37,6 +37,7 @@ return [
         "dontRecordOscilloscope" => "Do not record the oscilloscope if possible (<i>this will reduce the recording size if you only record a voice message</i>).",
         "video" => [
             "disable" => "Video device disabled.",
+            "disabledByInterviewer" => "Video device disabled for this survey.",
             "unavailable" => "Video device unavailable.<br> You still have the possibility to record an audio message.",
             "button" => [
                 "stop" => "Stop the recording",
