@@ -251,6 +251,6 @@ define("TRADUCTION", $traduction->traductions);
     const TRADUCTION_TIME = <?php echo json_encode(TRADUCTION["time"], JSON_UNESCAPED_UNICODE) ?>;
     const TRADUCTION_ERROR_DEVICE = <?php echo json_encode(TRADUCTION["errorMessages"]["device"], JSON_UNESCAPED_UNICODE) ?>;
 </script>
-<script type="module" src="./src/script/response_message/main.js"></script>
+<script type="module" src="./src/script/survey_response_message/main.js"></script>
 
 </html>
