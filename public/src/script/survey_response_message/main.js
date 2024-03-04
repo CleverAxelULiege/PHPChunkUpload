@@ -63,15 +63,20 @@ async function init() {
         }
         
         videoPlayer = new VideoPlayer(document.querySelector(".video_player"));
+        let shouldOnlyRecordAudio = document.querySelector("main").getAttribute("data-should-only-record-audio") == "true" ? true : false;
         
         page
             .removeUnavailableDeviceFromSelectableDevice(mediaStreamConstraint)
             .enumerateDevicesInSelect(deviceDetails.audio.deviceId, deviceDetails.video.deviceId, mediaStreamConstraint)
             .displayPossibilityToRecord();
+        
+        if(shouldOnlyRecordAudio){
+            page.removeVideoDeviceFromSelectableDevice(mediaStreamConstraint);
+        }
 
         if (!mediaStreamConstraint.video) {
             page.displayVideoDeviceUnavailable();
-        }
+        } 
 
         let audioVisualizer = new AudioVisualizer();
         
@@ -83,7 +88,6 @@ async function init() {
         .initEventListeners()
         .startStreamingToPreviewVideo()
         .then(() => {
-            let shouldOnlyRecordAudio = document.querySelector("main").getAttribute("data-should-only-record-audio") == "true" ? true : false;
             if(shouldOnlyRecordAudio){
                 recorder.disableVideoDevice();
             }

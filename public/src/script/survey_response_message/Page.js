@@ -65,8 +65,8 @@ export class Page {
                 this.element.ERROR_BOX_DEVICE_DIV.innerHTML = `<p>${traduction.unavailableMediaRecorderMediaStream} ${traduction.default}</p>`;
                 break;
             case DEVICE_STATUS.unavailableMimeType:
-                this.element.ERROR_BOX_DEVICE_DIV.innerHTML = 
-                `<p>${traduction.unavailableMimeType.replace(":PLACEHOLDER", "<ul style='padding-left: 20px;'>" + AVAILABLE_MIME_TYPES.map((type) => `<li>${type}</li>`).join("") + "</ul><br><br>")} ${traduction.default}</p>`;
+                this.element.ERROR_BOX_DEVICE_DIV.innerHTML =
+                    `<p>${traduction.unavailableMimeType.replace(":PLACEHOLDER", "<ul style='padding-left: 20px;'>" + AVAILABLE_MIME_TYPES.map((type) => `<li>${type}</li>`).join("") + "</ul><br><br>")} ${traduction.default}</p>`;
                 break;
             default:
                 if (deviceStatus != DEVICE_STATUS.ok) {
@@ -146,5 +146,14 @@ export class Page {
         }
 
         return this;
+    }
+
+    /**
+     * @param {MediaStreamConstraints} deviceConstraint 
+     */
+    removeVideoDeviceFromSelectableDevice(deviceConstraint) {
+        if (deviceConstraint.video) {
+            this.element.SELECTABLE_DEVICES_CONTAINER_DIV.removeChild(document.querySelector(".device_container.video_device"));
+        }
     }
 }

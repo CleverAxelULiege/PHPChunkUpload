@@ -34,7 +34,7 @@ define("TRADUCTION", $traduction->traductions);
 </head>
 
 <body>
-    <main style="display: none;" data-should-only-record-audio="true">
+    <main style="display: none;" data-should-only-record-audio="false">
         
         <div id="root">
             <!-- la barre de progrès de l'upload -->
