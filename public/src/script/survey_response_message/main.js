@@ -74,16 +74,22 @@ async function init() {
         }
 
         let audioVisualizer = new AudioVisualizer();
-
+        
+        
         recorder = new Recorder(TRADUCTION_RECORDER, TRADUCTION_RECORDED, TRADUCTION_TIME, audioVisualizer, videoPlayer);
         recorder
-            .setMimeType(mimeType)
-            .setDeviceConstraint(mediaStreamConstraint, deviceDetails.audio.deviceId, deviceDetails.video.deviceId)
-            .initEventListeners()
-            .startStreamingToPreviewVideo()
-            .then(() => {
-                // recorder.openRecorder();
-            });
+        .setMimeType(mimeType)
+        .setDeviceConstraint(mediaStreamConstraint, deviceDetails.audio.deviceId, deviceDetails.video.deviceId)
+        .initEventListeners()
+        .startStreamingToPreviewVideo()
+        .then(() => {
+            // recorder.openRecorder();
+        });
+        
+        let shouldOnlyRecordAudio = document.querySelector("main").getAttribute("data-should-only-record-audio") == "true" ? true : false;
+        if(shouldOnlyRecordAudio){
+            recorder.disableVideoDevice();
+        }
 
         page.updateDeviceToMediaConstraint(recorder.updateDevice());
     } catch (status) {

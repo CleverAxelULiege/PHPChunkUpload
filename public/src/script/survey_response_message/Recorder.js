@@ -152,12 +152,15 @@ export class Recorder {
      */
     videoPlayer = null
 
+    shouldOnlyRecordAudio = false
+
     /**
      * @param {ITraductionRecorder} tradRecorder
      * @param {ITraductionRecorded} tradRecorded
      * @param {ITraductionTime} tradTime
      * @param {AudioVisualizer} audioVisualizer
      * @param {VideoPlayer} videoPlayer
+     * @param {boolean} shouldOnlyRecordAudio 
      */
     constructor(tradRecorder, tradRecorded, tradTime, audioVisualizer, videoPlayer) {
         this.tradRecorder = tradRecorder;
@@ -279,7 +282,7 @@ export class Recorder {
             console.error("No constraint passed");
             return null;
         }
-
+        // can undo
         // this.element.DOWNLOAD_RECORDING_AT_END_SWITCH.addEventListener("change", this.savePreference.bind(this));
         // this.element.DONT_RECORD_OSCILLOSCOPE_SWITCH.addEventListener("change", this.savePreference.bind(this));
 
@@ -449,10 +452,22 @@ export class Recorder {
         });
     }
 
+    disableVideoDevice(){
+        if(this.mediaStreamConstraint.video){
+            this.toggleVideoDevice();
+        }
+
+        this.shouldOnlyRecordAudio = true;
+    }
+
     /**
      * @private
      */
     toggleVideoDevice() {
+        if(this.shouldOnlyRecordAudio){
+            return;
+        }
+
         if (!this.mediaStreamConstraint?.video) {
             window.alert("Didn't get the permission to use the video device or it doesn't exist.");
             return;
@@ -616,7 +631,7 @@ export class Recorder {
         
         let newMediaStream = null;
 
-        if (!this.mediaStreamConstraint.video) {
+        if (!this.mediaStreamConstraint.video || this.shouldOnlyRecordAudio) {
             newMediaStream = new MediaStream([this.mediaStream.getAudioTracks()[0]]);
             this.mediaRecorder = new MediaRecorder(newMediaStream);
         } else {

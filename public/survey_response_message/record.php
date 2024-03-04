@@ -33,8 +33,8 @@ define("TRADUCTION", $traduction->traductions);
     <title>Js recorder</title>
 </head>
 
-<body >
-    <main style="display: none;">
+<body>
+    <main style="display: none;" data-should-only-record-audio="true">
         
         <div id="root">
             <!-- la barre de progrès de l'upload -->
